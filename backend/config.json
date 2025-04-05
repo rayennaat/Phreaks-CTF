@@ -1,0 +1,3 @@
+{
+    "connectionString":"mongodb+srv://ctf:ctfuser123@ctf.0t90c.mongodb.net/?retryWrites=true&w=majority&appName=CTF"
+}

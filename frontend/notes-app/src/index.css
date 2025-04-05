@@ -1,0 +1,71 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;700;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: "Poppins", sans-serif;
+  }
+
+  body {
+    background-color: #fdfeff;
+    color: #000; /* Ensure text color is explicitly set */
+    transition: none; /* Disable transition for instant changes */
+    overflow-x: hidden;
+  }
+
+  /* Apply instant dark mode */
+  .dark {
+    background-color: #1a202c; /* Dark mode background */
+    color: #f7fafc; /* Dark mode text color */
+    
+    /* Add background color for dark mode */
+    &.switch-background {
+      background-color: #1a202c; /* Replace with your dark mode switch color */
+    }
+  }
+}
+
+.prose * {
+  color: inherit !important;
+  background-color: transparent !important;
+}
+
+
+
+@layer components {
+  .input-box {
+    @apply w-full text-sm bg-transparent border-[1.5px] px-5 py-3 rounded mb-4 outline-none;
+  }
+
+  .btn-primary{
+    @apply w-full p-2 my-1 text-sm text-white rounded bg-primary hover:bg-blue-600;
+  }
+
+  .icon-btn {
+    @apply text-xl cursor-pointer text-slate-300 hover:text-primary;
+  }
+
+  .input-label{
+    @apply text-xs text-slate-400;
+  }
+}
+
+/* Global CSS file */
+
+@keyframes slideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-30%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-down {
+  animation: slideDown 0.4s ease-out forwards;
+}
