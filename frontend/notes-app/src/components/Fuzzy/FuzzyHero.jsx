@@ -44,7 +44,7 @@ const FuzzyOverlay = () => {
 
 const ExampleContent = () => {
   return (
-    <div className="relative grid h-screen place-content-center space-y-6 bg-neutral-950 p-8">
+    <div className="relative grid h-screen p-8 space-y-6 place-content-center bg-neutral-950">
       <img src={phreaks} alt="" />
       <h1 className="text-center text-neutral-400">
         ARE YOU READY TO START <b className="">PWNING?</b> 📺

@@ -109,10 +109,11 @@ const Task = ({ task, onClose }) => {
       id="popup-overlay"
       className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80"
       onClick={handleOutsideClick}
+      
     >
-      <div className="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 text-pink-400 p-8 rounded-lg shadow-2xl w-[550px] transform transition-transform duration-500 ease-out">
+      <div className="bg-gray-900 text-white p-8 rounded-lg shadow-2xl w-[550px] transform transition-transform duration-500 ease-out">
         <button
-          className="absolute text-xl text-pink-400 top-4 right-4 hover:text-red-500"
+          className="absolute text-xl text-white top-4 right-4 hover:text-gray-300"
           onClick={onClose}
         >
           ✖
@@ -121,7 +122,7 @@ const Task = ({ task, onClose }) => {
           <button
             className={`px-4 py-2 font-mono ${
               activeTab === "challenge"
-                ? "bg-gray-800 text-pink-400 border-b-2 border-pink-400 rounded-t-md"
+                ? "bg-gray-800 text-white border-b-2 border-white rounded-t-md"
                 : "text-gray-400 hover:text-gray-300"
             }`}
             onClick={() => setActiveTab("challenge")}
@@ -131,7 +132,7 @@ const Task = ({ task, onClose }) => {
           <button
             className={`px-4 py-2 font-mono ${
               activeTab === "solves"
-                ? "bg-gray-800 text-pink-400 border-b-2 border-pink-400 rounded-t-md"
+                ? "bg-gray-800 text-white border-b-2 border-white rounded-t-md"
                 : "text-gray-400 hover:text-gray-300"
             }`}
             onClick={() => setActiveTab("solves")}
@@ -146,21 +147,21 @@ const Task = ({ task, onClose }) => {
               🕵️‍♂️ {task.title}
             </h1>
             <p className="mb-4 font-mono text-lg font-semibold">
-              💰 Points: <span className="text-yellow-500">{points}</span>
+              💰 Points: <span className="text-yellow-400">{points}</span>
             </p>
             <div
-              className="pl-4 mb-6 font-mono text-sm text-gray-300 border-l-4 border-pink-500"
+              className="pl-4 mb-6 font-mono text-sm text-gray-300 border-l-4 border-gray-500"
               dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(task.description) }} // Render sanitized HTML
             />
             {task.resource && (
               <div className="mt-4">
-                <p className="pl-4 mb-2 font-mono text-sm text-gray-300 border-l-4 border-pink-400">
+                <p className="pl-4 mb-2 font-mono text-sm text-gray-300 border-l-4 border-gray-400">
                   Resource:
                 </p>
                 <a
                   href={`http://localhost:5000${task.resource}`}
                   download
-                  className="text-pink-400 hover:underline"
+                  className="text-white hover:underline hover:text-gray-300"
                 >
                   Download Resource
                 </a>
@@ -168,7 +169,7 @@ const Task = ({ task, onClose }) => {
             )}
             {!task.resource && (
               <div className="mt-4">
-                <p className="pl-4 mb-2 font-mono text-sm text-gray-300 border-l-4 border-pink-400">
+                <p className="pl-4 mb-2 font-mono text-sm text-gray-300 border-l-4 border-gray-400">
                   Resource:
                 </p>
                 <p className="font-mono text-sm text-gray-300">No Resource Available</p>
@@ -177,7 +178,7 @@ const Task = ({ task, onClose }) => {
             {task.hint && (
               <div>
                 <button
-                  className="px-6 py-2 mt-2 font-mono text-pink-400 border border-pink-500 rounded-md shadow-md bg-gradient-to-b from-gray-800 via-gray-700 to-gray-800 hover:bg-pink-600"
+                  className="px-6 py-2 mt-2 font-mono text-white bg-gray-800 border border-gray-500 rounded-md shadow-md hover:bg-gray-700"
                   onClick={() => setShowHint(!showHint)}
                 >
                   {showHint ? "Hide Hint" : "Hint"}
@@ -193,23 +194,23 @@ const Task = ({ task, onClose }) => {
               <input
                 type="text"
                 placeholder="Enter your flag here..."
-                className="w-full px-4 py-2 font-mono text-pink-300 bg-black border border-pink-500 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-400"
+                className="w-full px-4 py-2 font-mono text-white bg-gray-800 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
                 value={flag}
                 onChange={(e) => setFlag(e.target.value)}
                 required
               />
               <button
                 type="submit"
-                className="px-6 py-2 mt-6 font-mono font-bold text-black transition-transform duration-300 rounded-md shadow-lg bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 hover:scale-105"
+                className="px-6 py-2 mt-6 font-mono font-bold text-white transition-transform duration-300 bg-gray-700 rounded-md shadow-lg hover:bg-gray-600 hover:scale-105"
               >
                 Submit Flag
               </button>
             </form>
             {message && (
-              <div className="p-4 mt-4 text-white rounded-lg bg-gradient-to-r from-pink-500 to-red-500">{message}</div>
+              <div className="p-4 mt-4 text-white bg-gray-700 rounded-lg">{message}</div>
             )}
             {error && (
-              <div className="p-4 mt-4 text-white bg-red-500 rounded-lg">{error}</div>
+              <div className="p-4 mt-4 text-white bg-red-600 rounded-lg">{error}</div>
             )}
           </div>
         )}

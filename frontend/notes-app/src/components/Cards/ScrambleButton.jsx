@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { FiLock, FiUnlock } from "react-icons/fi";
+import { FiLock, FiUnlock, FiFilter, FiX } from "react-icons/fi";
 import { motion } from "framer-motion";
-import PropTypes from "prop-types";
 import Task from "../Task/Task";
 import axios from "axios";
 
@@ -9,27 +8,26 @@ const TaskCard = () => {
   const [challenges, setChallenges] = useState([]);
   const [selectedTask, setSelectedTask] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [teamId, setTeamId] = useState(null); // ✅ Store teamId in state
+  const [teamId, setTeamId] = useState(null);
+  const [showFilters, setShowFilters] = useState(false);
+  const [filters, setFilters] = useState({
+    categories: [],
+    status: 'all' // 'all', 'solved', 'unsolved'
+  });
 
   useEffect(() => {
     const fetchTeamId = async () => {
       try {
         const token = localStorage.getItem("accessToken");
-        if (!token) {
-          console.error("No token found. Please log in.");
-          return;
-        }
+        if (!token) return;
 
         const response = await axios.get("http://localhost:5000/get-teamid", {
-          headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+          headers: { Authorization: `Bearer ${token}` },
           params: { _: Date.now() },
         });
 
         if (response.data?.teamId) {
-          console.log("Fetched Team ID:", response.data.teamId);
-          setTeamId(response.data.teamId); // ✅ Save team ID
-        } else {
-          console.error("Team ID not found in response.");
+          setTeamId(response.data.teamId);
         }
       } catch (error) {
         console.error("Error fetching team ID:", error.message);
@@ -52,7 +50,28 @@ const TaskCard = () => {
       });
   }, []);
 
-  const groupedChallenges = challenges.reduce((groups, challenge) => {
+  // Get all unique categories
+  const allCategories = [...new Set(challenges.map(challenge => challenge.category))];
+
+  // Filter challenges based on selected filters
+  const filteredChallenges = challenges.filter(challenge => {
+    // Category filter
+    if (filters.categories.length > 0 && !filters.categories.includes(challenge.category)) {
+      return false;
+    }
+    
+    // Status filter
+    if (filters.status !== 'all') {
+      const isSolved = challenge.solvedByTeams.some(team => team.team_id === teamId);
+      if (filters.status === 'solved' && !isSolved) return false;
+      if (filters.status === 'unsolved' && isSolved) return false;
+    }
+    
+    return true;
+  });
+
+  // Group filtered challenges by category
+  const groupedChallenges = filteredChallenges.reduce((groups, challenge) => {
     if (!groups[challenge.category]) groups[challenge.category] = [];
     groups[challenge.category].push(challenge);
     return groups;
@@ -66,19 +85,108 @@ const TaskCard = () => {
     setSelectedTask(null);
   };
 
+  const toggleCategory = (category) => {
+    setFilters(prev => ({
+      ...prev,
+      categories: prev.categories.includes(category)
+        ? prev.categories.filter(c => c !== category)
+        : [...prev.categories, category]
+    }));
+  };
+
+  const toggleStatusFilter = (status) => {
+    setFilters(prev => ({
+      ...prev,
+      status: prev.status === status ? 'all' : status
+    }));
+  };
+
+  const clearAllFilters = () => {
+    setFilters({
+      categories: [],
+      status: 'all'
+    });
+  };
+
   return (
-    <>
+    <div className="relative">
+      {/* Filter Controls */}
+      <div className="flex flex-col gap-4 mb-6">
+        <div className="flex items-center justify-between">
+          <h2 className="font-mono text-xl text-gray-300">Filter Challenges</h2>
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className="flex items-center gap-2 px-4 py-2 text-gray-300 transition-colors bg-gray-800 rounded-md hover:bg-gray-700"
+          >
+            {showFilters ? <FiX /> : <FiFilter />}
+            {showFilters ? 'Hide Filters' : 'Show Filters'}
+          </button>
+        </div>
+
+        {showFilters && (
+          <div className="p-4 bg-gray-800 rounded-lg">
+            <div className="mb-4">
+              <h3 className="mb-2 font-mono text-gray-300">Status</h3>
+              <div className="flex gap-2">
+                {['solved', 'unsolved'].map(status => (
+                  <button
+                    key={status}
+                    onClick={() => toggleStatusFilter(status)}
+                    className={`px-3 py-1 text-sm rounded-full font-mono ${
+                      filters.status === status
+                        ? 'bg-white text-black'
+                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    }`}
+                  >
+                    {status.charAt(0).toUpperCase() + status.slice(1)}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h3 className="mb-2 font-mono text-gray-300">Categories</h3>
+              <div className="flex flex-wrap gap-2">
+                {allCategories.map(category => (
+                  <button
+                    key={category}
+                    onClick={() => toggleCategory(category)}
+                    className={`px-3 py-1 text-sm rounded-full font-mono ${
+                      filters.categories.includes(category)
+                        ? 'bg-white text-black'
+                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    }`}
+                  >
+                    {category}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {(filters.categories.length > 0 || filters.status !== 'all') && (
+              <button
+                onClick={clearAllFilters}
+                className="mt-4 text-sm text-gray-400 hover:text-white"
+              >
+                Clear all filters
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Challenges List */}
       {loading ? (
-        <p className="text-center text-white">Loading challenges...</p>
-      ) : (
+        <p className="text-center text-gray-300">Loading challenges...</p>
+      ) : Object.keys(groupedChallenges).length > 0 ? (
         Object.entries(groupedChallenges).map(([category, challenges]) => (
           <div key={category} className="mb-8">
-            <h2 className="text-2xl font-bold text-[#E0E0E0] dark:text-gray-200 mb-4 font-mono">
+            <h2 className="mb-4 font-mono text-2xl font-bold text-gray-300">
               {category} Challenges
             </h2>
             <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
               {challenges.map((challenge) => {
-                const isSolved = challenge.solvedByTeams.some((team) => team.team_id === teamId);
+                const isSolved = challenge.solvedByTeams.some(team => team.team_id === teamId);
 
                 return (
                   <div
@@ -88,7 +196,7 @@ const TaskCard = () => {
                   >
                     <EncryptButton
                       title={challenge.title}
-                      points={`Points: ${challenge.points}`}
+                      points={`${challenge.points} Points`}
                       isSolved={isSolved}
                     />
                   </div>
@@ -97,10 +205,32 @@ const TaskCard = () => {
             </div>
           </div>
         ))
+      ) : (
+        <div className="p-8 text-center text-gray-400 bg-gray-800 rounded-lg">
+          No challenges match your filters. Try adjusting your criteria.
+        </div>
       )}
 
-      {selectedTask && <Task task={selectedTask} onClose={handleClosePopup} />}
-    </>
+      {/* Task Popup - Now with proper full-screen overlay */}
+      {selectedTask && (
+  <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-70 p-4">
+    <div 
+      className="relative w-full max-w-xl p-8 mx-auto text-white bg-gray-900 rounded-lg shadow-2xl"
+      style={{
+        maxHeight: '90vh',
+        overflowY: 'auto'
+      }}
+    >
+      <button
+        className="absolute text-xl text-white top-4 right-4 hover:text-gray-300"
+        onClick={handleClosePopup}
+      >
+        ✖
+      </button>
+      <Task task={selectedTask} onClose={handleClosePopup} />
+    </div>
+  </div>
+)}</div>
   );
 };
 
@@ -166,12 +296,6 @@ const EncryptButton = ({ title, points, isSolved }) => {
       />
     </motion.button>
   );
-};
-
-EncryptButton.propTypes = {
-  title: PropTypes.string.isRequired,
-  points: PropTypes.string.isRequired,
-  isSolved: PropTypes.bool.isRequired,
 };
 
 export default TaskCard;

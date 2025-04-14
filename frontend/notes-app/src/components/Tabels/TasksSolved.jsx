@@ -6,7 +6,6 @@ const TasksSolved = ({ userId }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch solved challenges for the user
   useEffect(() => {
     const fetchSolvedChallenges = async () => {
       try {
@@ -37,7 +36,8 @@ const TasksSolved = ({ userId }) => {
 
   return (
     <div className="px-4 mx-auto max-w-screen-3xl md:px-1">
-      <div className="mt-12 overflow-x-auto font-mono border rounded-md shadow-sm border-zinc-600">
+      {/* Desktop Table (hidden on mobile) */}
+      <div className="hidden mt-12 overflow-x-auto font-mono border rounded-md shadow-sm border-zinc-600 md:block">
         <table className="w-full text-sm text-left table-fixed">
           <thead className="bg-transparent text-gray-100 font-medium border border-[#424242]">
             <tr>
@@ -64,22 +64,49 @@ const TasksSolved = ({ userId }) => {
                     {challenge.points}
                   </td>
                   <td className="px-6 py-4 text-gray-100 whitespace-nowrap">
-                    {new Date(challenge.time).toLocaleString()} {/* Format the time */}
+                    {new Date(challenge.time).toLocaleString()}
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td
-                  colSpan="4"
-                  className="px-6 py-4 text-center text-gray-400"
-                >
+                <td colSpan="4" className="px-6 py-4 text-center text-gray-400">
                   No tasks solved yet
                 </td>
               </tr>
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile Cards (hidden on desktop) */}
+      <div className="mt-6 space-y-3 md:hidden">
+        {solvedChallenges.length > 0 ? (
+          solvedChallenges.map((challenge, idx) => (
+            <div 
+              key={idx}
+              className="p-4 font-mono border rounded-md shadow-sm border-zinc-600 bg-[#292929]"
+            >
+              <div className="grid grid-cols-2 gap-2">
+                <div className="text-xs text-gray-400">Challenge:</div>
+                <div className="text-sm text-gray-100">{challenge.title}</div>
+                
+                <div className="text-xs text-gray-400">Category:</div>
+                <div className="text-sm text-gray-100">{challenge.category}</div>
+                
+                <div className="text-xs text-gray-400">Value:</div>
+                <div className="text-sm text-gray-100">{challenge.points}</div>
+                
+                <div className="text-xs text-gray-400">Time:</div>
+                <div className="text-sm text-gray-100">{new Date(challenge.time).toLocaleString()}</div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="p-4 text-center text-gray-400 border rounded-md border-zinc-600">
+            No tasks solved yet
+          </div>
+        )}
       </div>
     </div>
   );

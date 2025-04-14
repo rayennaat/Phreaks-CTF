@@ -1,44 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { FaPenNib } from 'react-icons/fa'; // Import an icon for the writeup button
+import { FaPenNib } from 'react-icons/fa';
 
 const TaskList = ({ teamId }) => {
   const [tasks, setTasks] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState('0');
-  const tasksPerPage = 9; // Number of tasks to display per page
-  const navigate = useNavigate(); // Initialize navigation
+  const tasksPerPage = 9;
+  const navigate = useNavigate();
 
-  console.log('Team ID in TaskList Component:', teamId); // Debugging: Log teamId
-
-  // Fetch solved challenges on component mount
   useEffect(() => {
-    if (!teamId) {
-      console.log("No Team ID available, skipping fetch");
-      return;
-    }
+    if (!teamId) return;
 
     const fetchSolvedChallenges = async () => {
       try {
-        console.log("Fetching solved challenges for Team ID:", teamId);
         const response = await axios.get(`http://localhost:5000/team/solved-challenges/${teamId}`);
-        console.log("Solved Challenges:", response.data);
-        setTasks(response.data); // ✅ Now safely updating state
+        setTasks(response.data);
       } catch (error) {
         console.error("Error fetching solved challenges:", error);
       }
     };
 
     fetchSolvedChallenges();
-  }, [teamId]); // Ensure it runs when `teamId` updates
+  }, [teamId]);
 
   const handleCategoryChange = (event) => {
     setSelectedCategory(event.target.value);
-    setCurrentPage(1); // Reset to the first page when category changes
+    setCurrentPage(1);
   };
 
-  const categories = [...new Set(tasks.map((task) => task.category))]; // Get unique categories
+  const categories = [...new Set(tasks.map((task) => task.category))];
 
   const filteredTasks =
     selectedCategory === '0'
@@ -62,15 +54,15 @@ const TaskList = ({ teamId }) => {
     }
 
     return (
-      <div className="flex items-center justify-center mt-4 space-x-2">
+      <div className="flex flex-wrap items-center justify-center gap-2 mt-4">
         {pageNumbers.map((number) => (
           <button
             key={number}
             onClick={() => handlePageChange(number)}
-            className={`px-3 py-1 border rounded ${
+            className={`px-3 py-1 rounded ${
               currentPage === number
-                ? 'bg-blue-100 text-blue-600'
-                : 'bg-white text-gray-700 hover:bg-gray-100'
+                ? 'bg-white text-black'
+                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
             }`}
           >
             {number}
@@ -81,67 +73,122 @@ const TaskList = ({ teamId }) => {
   };
 
   return (
-    <>
-      <div className="bg-[#1E1E1E] overflow-y-auto w-full h-[700px] px-12" style={{ WebkitOverflowScrolling: 'touch' }}>
-        <br />
-        <h1 className="bg-[#1E1E1E] py-3 text-center text-2xl font-mono text-gray-500 uppercase tracking-wide">
-          Tasks Solved
-        </h1>
-        <br />
+    <div className="bg-[#1E1E1E] p-4 md:p-8">
+      <h1 className="mb-6 font-mono text-xl tracking-wide text-center text-gray-300 uppercase md:text-2xl">
+        Tasks Solved
+      </h1>
 
-        <table className="min-w-full divide-y">
+      {/* Category Filter - Mobile First */}
+      <div className="mb-6">
+        <select
+          id="categorySelect"
+          className="w-full p-2 text-sm border-2 border-gray-600 text-gray-300 bg-[#292929] rounded-md"
+          value={selectedCategory}
+          onChange={handleCategoryChange}
+        >
+          <option value="0">All Categories</option>
+          {categories.map((category, index) => (
+            <option key={index + 1} value={category}>
+              {category}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Responsive Table Container */}
+      <div className="overflow-x-auto">
+        {/* Desktop Table (hidden on mobile) */}
+        <table className="hidden min-w-full divide-y md:table">
           <thead className="bg-transparent text-gray-100 font-medium border border-[#424242]">
             <tr>
-              <th className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase">
-                <select
-                  id="categorySelect"
-                  className="px-6 py-3 text-left text-xs font-medium border-2 border-gray-400 text-gray-500 uppercase tracking-wider bg-[#1E1E1E] rounded-md"
-                  value={selectedCategory}
-                  onChange={handleCategoryChange}
-                >
-                  <option value="0">All Categories</option>
-                  {categories.map((category, index) => (
-                    <option key={index + 1} value={category}>
-                      {category}
-                    </option>
-                  ))}
-                </select>
+              <th className="px-4 py-3 text-xs font-medium tracking-wider text-left text-gray-300 uppercase">
+                Category
               </th>
-              <th className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase">Challenge</th>
-              <th className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase">Value</th>
-              <th className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase">Date</th>
-              <th className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase">Writeup</th> {/* New Column */}
+              <th className="px-4 py-3 text-xs font-medium tracking-wider text-left text-gray-300 uppercase">
+                Challenge
+              </th>
+              <th className="px-4 py-3 text-xs font-medium tracking-wider text-left text-gray-300 uppercase">
+                Value
+              </th>
+              <th className="px-4 py-3 text-xs font-medium tracking-wider text-left text-gray-300 uppercase">
+                Date
+              </th>
+              <th className="px-4 py-3 text-xs font-medium tracking-wider text-left text-gray-300 uppercase">
+                Writeup
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y">
             {currentTasks.map((task, index) => (
               <tr key={index} className="bg-[#292929] hover:bg-[#424242] border border-[#424242]">
-                <td className="px-6 py-4 text-sm text-gray-100 whitespace-nowrap">{task.category}</td>
-                <td className="px-6 py-4 text-sm text-gray-100 whitespace-nowrap">{task.title}</td>
-                <td className="px-6 py-4 text-sm text-gray-100 whitespace-nowrap">{task.points}</td>
-                <td className="px-6 py-4 text-sm text-gray-100 whitespace-nowrap">{new Date(task.time).toLocaleString()}</td>
-                {/* Writeup Icon */}
-                <td className="px-6 py-4 text-sm text-center text-gray-100 whitespace-nowrap">
-                <button
-                  onClick={() =>
-                    navigate(
-                      `/create-writeups?challenge=${encodeURIComponent(task.title)}&category=${encodeURIComponent(task.category)}`
-                    )
-                  }
-                  className="text-gray-400 transition-colors duration-300 hover:text-pink-500"
-                  title="Write a Writeup"
-                >
-                  <FaPenNib size={16} />  
-              </button>
+                <td className="px-4 py-4 text-sm text-gray-300 whitespace-nowrap">
+                  {task.category}
+                </td>
+                <td className="px-4 py-4 text-sm text-gray-300 whitespace-nowrap">
+                  {task.title}
+                </td>
+                <td className="px-4 py-4 text-sm text-gray-300 whitespace-nowrap">
+                  {task.points}
+                </td>
+                <td className="px-4 py-4 text-sm text-gray-300 whitespace-nowrap">
+                  {new Date(task.time).toLocaleString()}
+                </td>
+                <td className="px-4 py-4 text-sm text-center whitespace-nowrap">
+                  <button
+                    onClick={() =>
+                      navigate(
+                        `/create-writeups?challenge=${encodeURIComponent(task.title)}&category=${encodeURIComponent(task.category)}`
+                      )
+                    }
+                    className="text-gray-400 transition-colors hover:text-pink-500"
+                    title="Write a Writeup"
+                  >
+                    <FaPenNib size={16} />
+                  </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
 
-        {renderPagination()}
+        {/* Mobile Cards (hidden on desktop) */}
+        <div className="space-y-4 md:hidden">
+          {currentTasks.map((task, index) => (
+            <div key={index} className="bg-[#292929] p-4 rounded-lg border border-[#424242]">
+              <div className="grid grid-cols-2 gap-2">
+                <div className="text-xs text-gray-400">Category:</div>
+                <div className="text-sm text-gray-300">{task.category}</div>
+                
+                <div className="text-xs text-gray-400">Challenge:</div>
+                <div className="text-sm text-gray-300">{task.title}</div>
+                
+                <div className="text-xs text-gray-400">Value:</div>
+                <div className="text-sm text-gray-300">{task.points}</div>
+                
+                <div className="text-xs text-gray-400">Date:</div>
+                <div className="text-sm text-gray-300">{new Date(task.time).toLocaleString()}</div>
+              </div>
+              
+              <div className="flex justify-end mt-3">
+                <button
+                  onClick={() =>
+                    navigate(
+                      `/create-writeups?challenge=${encodeURIComponent(task.title)}&category=${encodeURIComponent(task.category)}`
+                    )
+                  }
+                  className="flex items-center text-xs text-pink-500 hover:text-pink-400"
+                >
+                  <FaPenNib className="mr-1" size={14} />
+                  Write Writeup
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
-    </>
+
+      {renderPagination()}
+    </div>
   );
 };
 

@@ -51,12 +51,14 @@ const Writeups = () => {
 
     fetchWriteups();
   }, []);
+  
   const filteredWriteups = writeups.filter(writeup =>
     writeup.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
   if (loading) {
     return (
-      <div className="bg-[#121212] min-h-screen flex items-center justify-center">
+      <div className="flex items-center justify-center min-h-screen bg-gray-900">
         <div className="text-lg text-white">Loading writeups...</div>
       </div>
     );
@@ -64,14 +66,14 @@ const Writeups = () => {
 
   if (error) {
     return (
-      <div className="bg-[#121212] min-h-screen flex items-center justify-center">
+      <div className="flex items-center justify-center min-h-screen bg-gray-900">
         <div className="text-lg text-red-500">Error: {error}</div>
       </div>
     );
   }
 
   return (
-    <div className="bg-[#121212] min-h-screen pb-10 px-4 transition-colors duration-300">
+    <div className="min-h-screen px-4 pb-10 bg-gray-900">
       <UserBar />
       <br /><br />
 
@@ -79,14 +81,14 @@ const Writeups = () => {
         {/* Left Section (Search Bar + Writeups Table) */}
         <div className="flex flex-col flex-1 gap-4">
           {/* Search Bar */}
-          <div className="bg-[#1E1E1E] p-4 rounded-lg shadow-md">
-          <input
-            type="text"
-            placeholder="Search writeups..."
-            className="w-full p-2 rounded bg-[#2D2D2D] text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-pink-500"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+          <div className="p-4 bg-gray-800 rounded-lg shadow">
+            <input
+              type="text"
+              placeholder="Search writeups..."
+              className="w-full p-2 text-white placeholder-gray-400 bg-gray-700 rounded outline-none focus:ring-2 focus:ring-gray-500"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
 
           {/* Writeups Table (Cards) */}
@@ -94,35 +96,25 @@ const Writeups = () => {
             {filteredWriteups.map((writeup) => (
               <div
                 key={writeup._id}
-                className="bg-[#1E1E1E] flex items-center justify-between p-4 rounded-lg shadow-md hover:bg-[#2D2D2D] transition-colors duration-300"
+                className="flex items-center justify-between p-4 transition-colors duration-300 bg-gray-800 rounded-lg shadow hover:bg-gray-700"
               >
                 {/* Left Section - Category Badge */}
-                <div
-                  className="flex items-center justify-center w-1/5 h-16 text-sm font-bold text-white rounded-md"
-                  style={{
-                    background:
-                      writeup.category === "Exploitation"
-                        ? "linear-gradient(135deg, #FF416C, #FF4B2B)"
-                        : writeup.category === "Web Security"
-                        ? "linear-gradient(135deg, #00B4DB, #0083B0)"
-                        : "linear-gradient(135deg, #6A11CB, #2575FC)",
-                  }}
-                >
+                <div className="flex items-center justify-center w-1/5 h-16 text-sm font-bold text-white bg-gray-700 rounded-md">
                   {writeup.category}
                 </div>
 
                 {/* Middle Section - Details */}
                 <div className="flex flex-col flex-1 px-4">
                   <h2 className="text-lg font-semibold text-white">{writeup.title}</h2>
-                  <p className="text-sm text-gray-400">{writeup.summary}</p>
-                  <div className="flex items-center justify-between mt-1 text-xs text-gray-500">
+                  <p className="text-sm text-gray-300">{writeup.summary}</p>
+                  <div className="flex items-center justify-between mt-1 text-xs text-gray-400">
                     <div className="flex items-center gap-4">
                       <span>✍️ {writeup.author}</span>
                       <span>📅 {new Date(writeup.date).toLocaleDateString()}</span>
                     </div>
                     <a
                       href={`/writeups/${writeup._id}`}
-                      className="text-sm text-pink-500 hover:underline"
+                      className="text-sm text-white hover:underline"
                     >
                       Read More →
                     </a>
@@ -131,7 +123,7 @@ const Writeups = () => {
 
                 {/* Right Section - Likes & Comments */}
                 <div className="flex flex-col items-center gap-2">
-                  <div className="flex items-center text-sm text-gray-400">
+                  <div className="flex items-center text-sm text-gray-300">
                     ❤️ <span className="ml-1">{writeup.likes.length}</span>
                   </div>
                 </div>
@@ -145,14 +137,14 @@ const Writeups = () => {
           <div className="h-[350px] flex flex-row gap-4">
             
             {/* Most Liked Writeups */}
-            <div className="w-1/2 bg-[#1E1E1E] p-4 rounded-lg shadow-md text-white">
+            <div className="w-1/2 p-4 text-white bg-gray-800 rounded-lg shadow">
               <h3 className="flex items-center mb-4 text-lg font-normal">
-                🔥Most Liked
+                🔥 Most Liked
               </h3>
               <ul className="space-y-2">
                 {mostLikedWriteups.map((writeup) => (
-                  <li key={writeup._id} className="flex justify-between items-center p-3 bg-[#2D2D2D] rounded-md shadow-sm hover:bg-[#3D3D3D] transition">
-                    <a href={`/writeups/${writeup._id}`} className="font-medium text-pink-400 hover:underline">
+                  <li key={writeup._id} className="flex items-center justify-between p-3 transition bg-gray-700 rounded-md hover:bg-gray-600">
+                    <a href={`/writeups/${writeup._id}`} className="font-medium text-white hover:underline">
                       {writeup.title}
                     </a>
                     <span className="flex items-center gap-1 text-gray-300">
@@ -164,7 +156,7 @@ const Writeups = () => {
             </div>
 
             {/* Top Writers (Based on Writeup Count) */}
-            <div className="w-1/2 bg-[#1E1E1E] p-4 rounded-lg shadow-md text-white">
+            <div className="w-1/2 p-4 text-white bg-gray-800 rounded-lg shadow">
               <h3 className="flex items-center gap-2 mb-4 text-lg font-semibold">
                 🏆 Top Writers
               </h3>
@@ -178,19 +170,20 @@ const Writeups = () => {
                   .sort((a, b) => b[1] - a[1]) // Sort by writeup count
                   .slice(0, 5) // Get top 5 writers
                   .map(([author, count], index) => (
-                    <li key={index} className="flex flex-row items-center justify-between gap-2 font text-gray-300 p-2 bg-[#2D2D2D] rounded-md">
+                    <li key={index} className="flex flex-row items-center justify-between gap-2 p-2 bg-gray-700 rounded-md hover:bg-gray-600">
                       <div className="flex items-center gap-2">
                         🏆 <span className="font-medium text-white">{author}</span>
                       </div>
-                      <span className="ml-auto text-xs">- {count} Writeups</span>
+                      <span className="ml-auto text-xs text-gray-300">- {count} Writeups</span>
                     </li>
                   ))}
               </ul>
             </div>
           </div>
-            {/* Writeups Per Category Pie Chart */}
-          <div className="flex-col h-[400px] bg-[#1E1E1E] p-4 rounded-lg shadow-md flex items-center justify-center">
-            <h2 className="text-lg font-semibold text-white ">📊 Writeups by Category</h2>
+          
+          {/* Writeups Per Category Pie Chart */}
+          <div className="flex-col h-[400px] bg-gray-800 p-4 rounded-lg shadow flex items-center justify-center">
+            <h2 className="text-lg font-semibold text-white">📊 Writeups by Category</h2>
             
             {categoryData.length > 0 ? (
               <>
@@ -227,7 +220,7 @@ const Writeups = () => {
                     {categoryData.map((entry, index) => (
                       <Cell
                         key={`cell-${index}`}
-                        fill={["#007bff", "#ffcd56", "#00bfa5", "#ff7043"][index % 4]}
+                        fill={["#0088FE", "#00C49F", "#FFBB28", "#FF8042"][index % 4]} // Updated to standard chart colors
                       />
                     ))}
                   </Pie>
@@ -240,7 +233,7 @@ const Writeups = () => {
                       <div
                         className="w-4 h-4 rounded"
                         style={{
-                          backgroundColor: ["#007bff", "#ffcd56", "#00bfa5", "#ff7043"][index % 4],
+                          backgroundColor: ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"][index % 4],
                         }}
                       ></div>
                       <span className="text-sm text-white">
@@ -254,7 +247,6 @@ const Writeups = () => {
               <p className="text-white">No data available</p>
             )}
           </div>
-
         </div>
       </div>
     </div>

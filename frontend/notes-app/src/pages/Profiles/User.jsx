@@ -129,21 +129,27 @@ const User = () => {
         <div className="px-10 border border-[#333]">
           <TasksSolved userId={userId}/>
           
-        </div><br />
-        
-        <div className="flex flex-col mb-4">
-          <div className="flex flex-row items-center justify-center w-full gap-8 ">
-            <div className="w-[600px] h-[500px] flex items-center justify-center">
-              <DonutTasksCategory userId={userId}/>
-            </div>
-            <div className="w-[600px] h-[500px] flex items-center justify-center">
-              <DonutChart userId={userId}/>
-            </div>
-          </div> 
-          <div className="flex justify-center pt-10">
-            {/* <AreaChart />*/}
-          </div>
         </div>
+        
+        <div className="flex flex-col mt-20 mb-4">
+  {/* Charts Row - Responsive Layout */}
+  <div className="flex flex-col items-center justify-center w-full gap-8 lg:flex-row">
+    {/* First Donut Chart - Full width on mobile, half on desktop */}
+    <div className="w-full h-[400px] lg:w-[600px] lg:h-[500px] flex items-center justify-center">
+      <DonutTasksCategory userId={userId} />
+    </div>
+    
+    {/* Second Donut Chart - Full width on mobile, half on desktop */}
+    <div className="w-full h-[400px] lg:w-[600px] lg:h-[500px] flex items-center justify-center">
+      <DonutChart userId={userId} />
+    </div>
+  </div> 
+
+  {/* Area Chart Container - Centered with padding */}
+  <div className="flex justify-center pt-10">
+    {/* <AreaChart /> */}
+  </div>
+</div>
         </>
 )}
 {activeTab === 'settings' && (

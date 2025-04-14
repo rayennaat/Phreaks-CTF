@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import { FaSignOutAlt } from "react-icons/fa";
-import { FaUser } from "react-icons/fa6";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { FaSignOutAlt, FaUser, FaBars, FaTimes } from "react-icons/fa";
 import { FaUserGroup } from "react-icons/fa6";
 import { FaTools } from "react-icons/fa";
 
@@ -10,17 +8,14 @@ const UserBar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(localStorage.getItem("isAdmin") === "true");
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const checkAdminStatus = () => {
       setIsAdmin(localStorage.getItem("isAdmin") === "true");
     };
-
     window.addEventListener("storage", checkAdminStatus);
-
-    return () => {
-      window.removeEventListener("storage", checkAdminStatus);
-    };
+    return () => window.removeEventListener("storage", checkAdminStatus);
   }, []);
 
   const onLogout = () => {
@@ -28,173 +23,108 @@ const UserBar = () => {
     navigate("/login");
   };
 
+  const navLinkStyle = (path) =>
+    `relative flex items-center text-sm text-white cursor-pointer after:content-[''] after:absolute after:left-0 after:right-0 after:mx-auto ${
+      location.pathname === path ? 'after:w-full' : 'after:w-0'
+    } after:h-0.5 after:-bottom-1 after:bg-white after:transition-all after:duration-300 hover:after:w-full`;
+
   return (
-    <nav className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between px-4 py-4">
-      {/* Logo */}
-      <div className="flex items-center gap-2 space-x-2">
-        <a
-          href="/home"
-          className="flex items-center justify-center w-20 h-6 rounded-full shadow-lg bg-gradient-to-r from-pink-500 to-red-500"
-        >
-          <span className="text-sm font-bold text-white">CTF.tn</span>
-        </a>
-        <a href="/writeups"
-        className={`text-sm text-white cursor-pointer ${
-          location.pathname === "/writeups"
-            ? "bg-gradient-to-r from-pink-500 to-red-500 bg-clip-text text-transparent"
-            : "hover:bg-gradient-to-r hover:from-pink-500 hover:to-red-500 hover:bg-clip-text hover:text-transparent"
-        }`}
-        >
-          Writeups
-        </a>
-      </div>
+    <nav className="absolute top-0 left-0 right-0 z-10 px-4 py-4 bg-transparent">
+      <div className="flex items-center justify-between">
+        {/* Left - Logo & Writeups */}
+        <div className="flex items-center gap-4">
+          <Link
+            to="/home"
+            className="flex items-center justify-center w-20 h-6 bg-white rounded-full"
+          >
+            <span className="text-sm font-bold text-black">CTF.tn</span>
+          </Link>
+          <Link to="/writeups" className={navLinkStyle("/writeups")}>
+            Writeups
+          </Link>
+        </div>
 
-      {/* Navigation Links */}
-      <ul className="flex space-x-8">
-        <li>
-          <Link
-            to="/users"
-            className={`text-sm text-white cursor-pointer ${
-              location.pathname === "/users"
-                ? "bg-gradient-to-r from-pink-500 to-red-500 bg-clip-text text-transparent"
-                : "hover:bg-gradient-to-r hover:from-pink-500 hover:to-red-500 hover:bg-clip-text hover:text-transparent"
-            }`}
-          >
-            Users
-          </Link>
-        </li>
-        <li>
-          <Link
-            to="/teams"
-            className={`text-sm text-white cursor-pointer ${
-              location.pathname === "/teams"
-                ? "bg-gradient-to-r from-pink-500 to-red-500 bg-clip-text text-transparent"
-                : "hover:bg-gradient-to-r hover:from-pink-500 hover:to-red-500 hover:bg-clip-text hover:text-transparent"
-            }`}
-          >
-            Teams
-          </Link>
-        </li>
-        <li>
-          <Link
-            to="/scoreboard"
-            className={`text-sm text-white cursor-pointer ${
-              location.pathname === "/scoreboard"
-                ? "bg-gradient-to-r from-pink-500 to-red-500 bg-clip-text text-transparent"
-                : "hover:bg-gradient-to-r hover:from-pink-500 hover:to-red-500 hover:bg-clip-text hover:text-transparent"
-            }`}
-          >
-            Scoreboard
-          </Link>
-        </li>
-        <li>
-          <Link
-            to="/challenges"
-            className={`text-sm text-white cursor-pointer ${
-              location.pathname === "/challenges"
-                ? "bg-gradient-to-r from-pink-500 to-red-500 bg-clip-text text-transparent"
-                : "hover:bg-gradient-to-r hover:from-pink-500 hover:to-red-500 hover:bg-clip-text hover:text-transparent"
-            }`}
-          >
-            Challenges
-          </Link>
-        </li>
-      </ul>
-
-      {/* Right Side Icons */}
-      <div className="flex items-center gap-px space-x-4">
-        {isAdmin ? (
-          // If admin, show "Admin Panel"
-          <Link
-            to="/admin/statics"
-            className={`group flex flex-row gap-1 items-center text-white cursor-pointer ${
-              location.pathname === "/admin/statics"
-                ? "hover:text-pink-500 hover:to-red-500"
-                : "hover:text-pink-500 hover:to-red-500"
-            }`}
-          >
-            <FaTools
-              className={`mr-1 text-sm ${
-                location.pathname === "/admin/statics"
-                  ? "text-pink-500"
-                  : "group-hover:text-pink-500"
-              }`}
-            />
-            <span
-              className={`text-sm ${
-                location.pathname === "/admin/statics"
-                  ? "bg-gradient-to-r from-pink-500 to-red-500 bg-clip-text text-transparent"
-                  : "hover:bg-gradient-to-r hover:from-pink-500 hover:to-red-500 hover:bg-clip-text hover:text-transparent"
-              }`}
-            >
-              Admin Panel
-            </span>
-          </Link>
-        ) : (
-          // If normal user, show "Team"
-          <Link
-            to="/team"
-            className={`group flex flex-row items-center text-white cursor-pointer ${
-              location.pathname === "/team"
-                ? "hover:text-pink-500 hover:to-red-500"
-                : "hover:text-pink-500 hover:to-red-500"
-            }`}
-          >
-            <FaUserGroup
-              className={`mr-1 text-sm ${
-                location.pathname === "/team"
-                  ? "text-pink-500"
-                  : "group-hover:text-pink-500"
-              }`}
-            />
-            <span
-              className={`text-sm ${
-                location.pathname === "/team"
-                  ? "bg-gradient-to-r from-pink-500 to-red-500 bg-clip-text text-transparent"
-                  : "hover:bg-gradient-to-r hover:from-pink-500 hover:to-red-500 hover:bg-clip-text hover:text-transparent"
-              }`}
-            >
-              Team
-            </span>
-          </Link>
-        )}
-
-        {/* Profile Link */}
-        <Link
-          to="/profileuser"
-          className={`group flex flex-row items-center text-white cursor-pointer ${
-            location.pathname === "/profileuser"
-              ? "hover:text-pink-500 hover:to-red-500"
-              : "hover:text-pink-500 hover:to-red-500"
-          }`}
+        {/* Mobile toggle button */}
+        <button 
+          onClick={() => setMenuOpen(!menuOpen)} 
+          className="text-white lg:hidden"
+          aria-label="Toggle menu"
         >
-          <FaUser
-            className={`mr-1 text-xs ${
-              location.pathname === "/profileuser"
-                ? "text-pink-500"
-                : "group-hover:text-pink-500"
-            }`}
-          />
-          <span
-            className={`text-sm ${
-              location.pathname === "/profileuser"
-                ? "bg-gradient-to-r from-pink-500 to-red-500 bg-clip-text text-transparent"
-                : "hover:bg-gradient-to-r hover:from-pink-500 hover:to-red-500 hover:bg-clip-text hover:text-transparent"
-            }`}
-          >
+          {menuOpen ? <FaTimes size={22} /> : <FaBars size={22} />}
+        </button>
+
+        {/* Desktop nav */}
+        <ul className="hidden space-x-8 lg:flex">
+          <li><Link to="/users" className={navLinkStyle("/users")}>Users</Link></li>
+          <li><Link to="/teams" className={navLinkStyle("/teams")}>Teams</Link></li>
+          <li><Link to="/scoreboard" className={navLinkStyle("/scoreboard")}>Scoreboard</Link></li>
+          <li><Link to="/challenges" className={navLinkStyle("/challenges")}>Challenges</Link></li>
+        </ul>
+
+        {/* Right side icons */}
+        <div className="items-center hidden space-x-4 lg:flex">
+          {isAdmin ? (
+            <Link to="/admin/statics" className="flex items-center text-white group">
+              <FaTools className="mr-1 text-sm group-hover:text-white" />
+              <span className={navLinkStyle("/admin/statics")}>Admin Panel</span>
+            </Link>
+          ) : (
+            <Link to="/team" className="flex items-center text-white group">
+              <FaUserGroup className="mr-1 text-sm group-hover:text-white" />
+              <span className={navLinkStyle("/team")}>Team</span>
+            </Link>
+          )}
+          <Link to="/profileuser" className={navLinkStyle("/profileuser")}>
+            <FaUser className="mr-1 text-xs" />
             Profile
-          </span>
-        </Link>
-
-        {/* Logout Button */}
-        <Link
-          onClick={onLogout}
-          to="/login"
-          className="flex items-center justify-center text-white rounded-md shadow-lg w-9 h-7 bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600"
-        >
-          <FaSignOutAlt className="text-sm" />
-        </Link>
+          </Link>
+          <button
+            onClick={onLogout}
+            className="flex items-center justify-center text-black bg-white rounded-md w-9 h-7 hover:opacity-80"
+          >
+            <FaSignOutAlt className="text-sm" />
+          </button>
+        </div>
       </div>
+
+      {/* Mobile menu */}
+      {menuOpen && (
+        <div className="absolute left-0 right-0 z-20 px-4 py-4 mt-2 bg-gray-900 shadow-lg lg:hidden">
+          <ul className="space-y-4">
+            <li><Link to="/users" className={navLinkStyle("/users")} onClick={() => setMenuOpen(false)}>Users</Link></li>
+            <li><Link to="/teams" className={navLinkStyle("/teams")} onClick={() => setMenuOpen(false)}>Teams</Link></li>
+            <li><Link to="/scoreboard" className={navLinkStyle("/scoreboard")} onClick={() => setMenuOpen(false)}>Scoreboard</Link></li>
+            <li><Link to="/challenges" className={navLinkStyle("/challenges")} onClick={() => setMenuOpen(false)}>Challenges</Link></li>
+          </ul>
+          <div className="flex flex-col gap-4 pt-4 mt-6 border-t border-gray-700">
+            {isAdmin ? (
+              <Link to="/admin/statics" className="flex items-center gap-2" onClick={() => setMenuOpen(false)}>
+                <FaTools className="text-sm" />
+                <span className={navLinkStyle("/admin/statics")}>Admin Panel</span>
+              </Link>
+            ) : (
+              <Link to="/team" className="flex items-center gap-2" onClick={() => setMenuOpen(false)}>
+                <FaUserGroup className="text-sm" />
+                <span className={navLinkStyle("/team")}>Team</span>
+              </Link>
+            )}
+            <Link to="/profileuser" className="flex items-center gap-2" onClick={() => setMenuOpen(false)}>
+              <FaUser className="text-xs" />
+              <span className={navLinkStyle("/profileuser")}>Profile</span>
+            </Link>
+            <button
+              onClick={() => {
+                setMenuOpen(false);
+                onLogout();
+              }}
+              className="flex items-center justify-center gap-2 py-2 text-black bg-white rounded-md hover:opacity-80"
+            >
+              <FaSignOutAlt className="text-sm" />
+              <span>Logout</span>
+            </button>
+          </div>
+        </div>
+      )}
     </nav>
   );
 };
