@@ -7,7 +7,7 @@ import Chat from '../../components/Chat/Chat';
 import axios from 'axios';
 import DonutTasksSolved from '../../Graphs/DonutTasksSolved';
 import DonutTasksCategory from '../../Graphs/DonutTasksCategory';
-import TeamsForm from './TeamsForm'; // Import the TeamsForm component
+import TeamsForm from './TeamsForm';
 import TeamRadar from '../../Graphs/TeamRadar';
 
 const Team = () => {
@@ -17,11 +17,15 @@ const Team = () => {
     bio: '',
     link: '',
     country: '',
+    adminId: '',
+    profilePic: ''
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [teamId, setTeamId] = useState(null);
-  const [activeTab, setActiveTab] = useState('profile'); // 'profile' or 'settings'
+  const [currentUserId, setCurrentUserId] = useState('');
+  const [activeTab, setActiveTab] = useState('profile');
+  const [isAdmin, setIsAdmin] = useState(false);
 
   // Fetch team details on component mount
   useEffect(() => {
@@ -35,19 +39,23 @@ const Team = () => {
         }
 
         const response = await axios.get('http://localhost:5000/get-team', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          params: {
-            _: Date.now(), // Cache-busting parameter
-          },
+          headers: { Authorization: `Bearer ${token}` }
         });
 
         if (response.data && response.data.team) {
           setTeamDetails(response.data.team);
+          setCurrentUserId(response.data.currentUserId);
           setTeamId(response.data.team.id);
-        } else {
-          setError('Team data not found.');
+          
+          // Compare IDs in frontend
+          const adminCheck = response.data.currentUserId === response.data.team.adminId;
+          setIsAdmin(adminCheck);
+          
+          console.log("Admin check:", {
+            currentUser: response.data.currentUserId,
+            adminId: response.data.team.adminId,
+            isAdmin: adminCheck
+          });
         }
       } catch (err) {
         console.error('Error fetching team data:', err);
@@ -60,79 +68,79 @@ const Team = () => {
     fetchTeamDetails();
   }, []);
 
-  // Function to update team details in the parent component
   const handleUpdateTeamDetails = (updatedDetails) => {
     setTeamDetails(updatedDetails);
-    setActiveTab('profile'); // Switch back to the profile view after updating
+    setActiveTab('profile');
   };
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div className="p-4 text-red-500">Error: {error}</div>;
+  }
+
+  if (loading) {
+    return <div className="p-4 text-white">Loading team data...</div>;
   }
 
   return (
-    <div className="bg-[#1E1E1E] dark:bg-[#1E1E1E] min-h-screen pb-1 transition-colors duration-300">
+    <div className="bg-[#1E1E1E] min-h-screen pb-1">
       <UserBar />
-      <br /><br /><br />
-
-      {/* Main Team View */}
-      <div className="flex flex-col">
+      <div className="px-4 pt-16">
         {/* Team Information Section */}
-<div className="flex flex-col md:flex-row flex-1 mx-3 border border-[#333] bg-[#212121] rounded-lg shadow-md">
-  <div className="flex-1 bg-[#212121]">
-    <div className="flex flex-col gap-6 p-6">
-      {/* Team Header (Logo + Info) */}
-      <div className="flex flex-col items-center gap-4 sm:flex-row md:gap-8 lg:gap-12">
-        <img
-          src={`http://localhost:5000/${teamDetails.profilePic}`}
-          alt="Team Logo"
-          className="object-cover w-[90px] h-[90px] rounded-full"
-        />
-        <div className="flex flex-col items-center text-center sm:items-start sm:text-left">
-          <h3 className="mb-2 text-lg font-medium text-white">Team:</h3>
-          <h1 className="mb-2 text-2xl font-bold text-white">{teamDetails.name}</h1>
-          <div className="flex items-center justify-center sm:justify-start">
-            <h3 className="mr-2 text-white">
-              Country: {loading ? 'Loading...' : teamDetails.country || 'Not set'}
-            </h3>
-            {teamDetails.country && (
+        <div className="flex flex-col md:flex-row flex-1 mx-3 border border-[#333] bg-[#212121] rounded-lg shadow-md">
+          <div className="flex-1 bg-[#212121] p-6">
+            <div className="flex flex-col items-center gap-4 sm:flex-row md:gap-8 lg:gap-12">
               <img
-                src={`https://cdn.jsdelivr.net/npm/react-flagkit@1.0.2/img/SVG/${teamDetails.country}.svg`}
-                alt={`${teamDetails.country} Flag`}
-                className="w-5 h-5"
+                src={`http://localhost:5000/${teamDetails.profilePic}`}
+                alt="Team Logo"
+                className="object-cover w-24 h-24 rounded-full"
                 onError={(e) => {
-                  e.target.src = 'https://example.com/path/to/fallback-flag.svg';
+                  e.target.src = 'https://via.placeholder.com/150';
                 }}
               />
+              <div className="flex flex-col items-center text-center sm:items-start sm:text-left">
+                <h1 className="text-2xl font-bold text-white">{teamDetails.name}</h1>
+                <div className="flex items-center mt-2">
+                  <span className="mr-2 text-gray-300">Country:</span>
+                  {teamDetails.country && (
+                    <>
+                      <span className="mr-2 text-white">{teamDetails.country}</span>
+                      <img
+                        src={`https://flagcdn.com/24x18/${teamDetails.country.toLowerCase()}.png`}
+                        alt="Country flag"
+                        className="w-6 h-4"
+                      />
+                    </>
+                  )}
+                </div>
+                <div className="mt-2">
+                  <span className="text-gray-300">Score: </span>
+                  <span className="font-bold text-green-400">{teamDetails.points}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6">
+              <h2 className="mb-2 text-xl font-semibold text-white">Team Bio</h2>
+              <p className="text-gray-300">{teamDetails.bio || 'No bio provided'}</p>
+            </div>
+
+            {teamDetails.link && (
+              <div className="mt-4">
+                <a 
+                  href={teamDetails.link} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-400 hover:underline"
+                >
+                  {teamDetails.link}
+                </a>
+              </div>
             )}
           </div>
-          <div className="flex items-center justify-center mt-2 sm:justify-start">
-            <h3 className="mr-2 text-white">Score:</h3>
-            <span className="font-medium text-emerald-400">{teamDetails.points}</span>
-          </div>
         </div>
-      </div>
 
-      {/* Bio */}
-      <div className="w-full prose text-white dark:prose-white max-w-none">
-        <h2 className="mb-2 text-xl font-semibold text-white">Team Bio</h2>
-        <p>{teamDetails.bio}</p>
-      </div>
-
-      {/* Link Section */}
-      <div className="flex flex-col w-full gap-1 sm:flex-row sm:justify-between">
-        <h3 className="text-base font-medium text-white">Link:</h3>
-        <a href={teamDetails.link} className="break-all text-sky-400 hover:underline">
-          {teamDetails.link}
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-             {/* Toggle Buttons */}
-        <div className="flex justify-center gap-4 pt-5 pb-4">
+        {/* Toggle Buttons */}
+        <div className="flex justify-center gap-4 my-6">
           <button
             onClick={() => setActiveTab('profile')}
             className={`px-6 py-2 rounded-md font-semibold ${
@@ -141,62 +149,61 @@ const Team = () => {
           >
             Team View
           </button>
-          <button
-            onClick={() => setActiveTab('settings')}
-            className={`px-6 py-2 rounded-md font-semibold ${
-              activeTab === 'settings' ? 'bg-green-600 text-white' : 'bg-gray-800 text-gray-300'
-            }`}
-          >
-            Team Settings
-          </button>
+          {isAdmin && (
+            <button
+              onClick={() => setActiveTab('settings')}
+              className={`px-6 py-2 rounded-md font-semibold ${
+                activeTab === 'settings' ? 'bg-green-600 text-white' : 'bg-gray-800 text-gray-300'
+              }`}
+            >
+              Team Settings
+            </button>
+          )}
         </div>
 
-        {/* Conditional Rendering for Profile or Settings */}
-        {activeTab === 'profile' && (
+        {/* Tab Content */}
+        {activeTab === 'profile' ? (
           <>
 
-            {/* Team Members Section */}
-            <div className="flex bg-[#212121] justify-center items-center border border-[#333] rounded-lg mt-6">
-              <div className="flex-[1] bg-[#212121] px-7">
-                <TeamMemberCard teamId={teamId}/>
+          {/* Team Members Section */}
+          <div className="flex bg-[#212121] justify-center items-center border border-[#333] rounded-lg mt-6">
+            <div className="flex-[1] bg-[#212121] px-7">
+              <TeamMemberCard teamId={teamId}/>
+            </div>
+          </div>
+
+          {/* Task List */}
+          <div className="flex-1 bg-[#212121] border border-[#333] mt-6">
+            <TaskList teamId={teamId} />
+          </div>
+
+          {/* Graphs */}
+          <div className="flex flex-col">
+            {/* Radar + Donut side-by-side on large, stacked on small */}
+            <div className="flex flex-col items-center justify-center w-full gap-10 px-4 py-6 lg:flex-row">
+              <div className="w-full lg:w-[600px] h-[500px] flex items-center justify-center">
+                <TeamRadar teamId={teamId} />
+              </div>
+              <div className="w-full lg:w-[600px] h-[500px] flex items-center justify-center">
+                <DonutTasksSolved teamId={teamId} />
               </div>
             </div>
 
-            {/* Task List */}
-            <div className="flex-1 bg-[#212121] border border-[#333] mt-6">
-              <TaskList teamId={teamId} />
-            </div>
-
-            {/* Graphs */}
-            <div className="flex flex-col">
-              {/* Radar + Donut side-by-side on large, stacked on small */}
-              <div className="flex flex-col items-center justify-center w-full gap-10 px-4 py-6 lg:flex-row">
-                <div className="w-full lg:w-[600px] h-[500px] flex items-center justify-center">
-                  <TeamRadar teamId={teamId} />
-                </div>
-                <div className="w-full lg:w-[600px] h-[500px] flex items-center justify-center">
-                  <DonutTasksSolved teamId={teamId} />
-                </div>
-              </div>
-
-              {/* Area Chart (bottom) */}
-              <div className="bg-[#1E1E1E] px-4 pb-10 flex justify-center">
-                <div className="w-full max-w-[1200px]">
-                  <AreaChart teamId={teamId} />
-                </div>
+            {/* Area Chart (bottom) */}
+            <div className="bg-[#1E1E1E] px-4 pb-10 flex justify-center">
+              <div className="w-full max-w-[1200px]">
+                <AreaChart teamId={teamId} />
               </div>
             </div>
-          </>
-        )}
-
-        {activeTab === 'settings' && (
-          <div className="flex justify-center px-10">
+          </div>
+        </>
+        ) : (
+          <div className="bg-[#212121] border border-[#333] rounded-lg p-6">
             <TeamsForm teamId={teamId} />
           </div>
         )}
       </div>
 
-      {/* Chat Component */}
       <Chat />
     </div>
   );

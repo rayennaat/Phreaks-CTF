@@ -559,44 +559,35 @@ app.put('/putteams/:id', async (req, res) => {
 
 app.get("/get-team", authenticateToken, async (req, res) => {
   if (!req.user) {
-      console.log("No user found in request");
-      return res.sendStatus(403);
+    return res.sendStatus(403);
   }
-  console.log("Decoded user:", req.user); // Debugging: Log the decoded user data
-  const { id } = req.user.user; // Access user ID from req.user.user
+
   try {
-      // Find the user by ID
-      const user = await User.findOne({ _id: id });
-      if (!user) {
-          console.log("User not found in database");
-          return res.sendStatus(401);
-      }
-      // Check if the user has a teamId
-      if (!user.teamId) {
-          return res.status(404).json({ message: "User is not part of a team" });
-      }
-      // Find the team by teamId
-      const team = await Team.findOne({ _id: user.teamId }, 'name points bio link country TeamPic'); // Include country and TeamPic
-      if (!team) {
-          console.log("Team not found in database");
-          return res.status(404).json({ message: "Team not found" });
-      }
-      // Return the team details, including teamId
-      return res.json({
-          team: {
-              id: team._id, // Include teamId in the response
-              name: team.name,
-              points: team.points,
-              bio: team.bio,
-              link: team.link,
-              country: team.country, // Include country
-              profilePic: team.TeamPic, // Include TeamPic
-          },
-          message: "Team details fetched successfully",
-      });
+    const user = await User.findOne({ _id: req.user.user.id });
+    if (!user) return res.sendStatus(401);
+    if (!user.teamId) return res.status(404).json({ message: "User is not part of a team" });
+
+    const team = await Team.findOne({ _id: user.teamId });
+    if (!team) return res.status(404).json({ message: "Team not found" });
+
+    return res.json({
+      team: {
+        id: team._id,
+        name: team.name,
+        points: team.points,
+        bio: team.bio,
+        link: team.link,
+        country: team.country,
+        profilePic: team.TeamPic,
+        adminId: team.adminId // Just send the adminId
+      },
+      currentUserId: user._id.toString(), // Send user ID for frontend comparison
+      message: "Team details fetched successfully"
+    });
+
   } catch (error) {
-      console.error("Error fetching team details:", error);
-      return res.status(500).json({ message: "Server error" });
+    console.error("Error:", error);
+    return res.status(500).json({ message: "Server error" });
   }
 });
 
