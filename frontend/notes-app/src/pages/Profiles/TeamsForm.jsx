@@ -86,7 +86,7 @@ const TeamsForm = ({ teamId, onUpdateTeamDetails }) => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-[#1E1E1E] px-4">
+    <div className="flex justify-center items-center min-h-screen bg-[#212121] px-4">
       <div className="flex flex-col w-full max-w-6xl gap-6 p-4 md:flex-row">
         {/* Form 1: Country, Link, and Bio */}
         <div className="bg-[#2E2E2E] h-[470px] p-8 rounded-lg shadow-lg flex-1">
