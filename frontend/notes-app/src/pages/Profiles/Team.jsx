@@ -204,7 +204,6 @@ const Team = () => {
         )}
       </div>
 
-      <Chat />
     </div>
   );
 };

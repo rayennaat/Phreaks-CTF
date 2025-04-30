@@ -89,7 +89,7 @@ const TeamsForm = ({ teamId, onUpdateTeamDetails }) => {
     <div className="flex justify-center items-center min-h-screen bg-[#1E1E1E] px-4">
       <div className="flex flex-col w-full max-w-6xl gap-6 p-4 md:flex-row">
         {/* Form 1: Country, Link, and Bio */}
-        <div className="bg-[#2E2E2E] h-[400px] p-8 rounded-lg shadow-lg flex-1">
+        <div className="bg-[#2E2E2E] h-[470px] p-8 rounded-lg shadow-lg flex-1">
           <h3 className="flex justify-center mb-6 text-xl font-medium text-white">Add Team Informations</h3>
           <form onSubmit={handleDetailsSubmit} className="space-y-6">
             {/* Country Dropdown with Flags */}
