@@ -63,21 +63,21 @@ const UserBar = () => {
 
         {/* Right side icons */}
         <div className="items-center hidden space-x-4 lg:flex">
-          {isAdmin ? (
-            <Link to="/admin/statics" className="flex items-center text-white group">
-              <FaTools className="mr-1 text-sm group-hover:text-white" />
-              <span className={navLinkStyle("/admin/statics")}>Admin Panel</span>
+        {isAdmin ? (
+              <Link to="/admin/statics" className={`flex items-center ${navLinkStyle("/admin/statics")}`}>
+                <FaTools className="mr-1 text-sm" />
+                Admin Panel
+              </Link>
+            ) : (
+              <Link to="/team" className={`flex items-center ${navLinkStyle("/team")}`}>
+                <FaUserGroup className="mr-1 text-sm" />
+                Team
+              </Link>
+            )}
+            <Link to="/profileuser" className={`flex items-center ${navLinkStyle("/profileuser")}`}>
+              <FaUser className="mr-1 text-xs" />
+              Profile
             </Link>
-          ) : (
-            <Link to="/team" className="flex items-center text-white group">
-              <FaUserGroup className="mr-1 text-sm group-hover:text-white" />
-              <span className={navLinkStyle("/team")}>Team</span>
-            </Link>
-          )}
-          <Link to="/profileuser" className={navLinkStyle("/profileuser")}>
-            <FaUser className="mr-1 text-xs" />
-            Profile
-          </Link>
           <button
             onClick={onLogout}
             className="flex items-center justify-center text-black bg-white rounded-md w-9 h-7 hover:opacity-80"

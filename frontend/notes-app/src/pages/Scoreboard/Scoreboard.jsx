@@ -18,10 +18,10 @@ const Scoreboard = () => {
   };
 
   return (
-    <div className="bg-gray-900 dark:bg-[#1E1E1E] min-h-screen pb-1 transition-colors duration-300">
+    <div className="bg-[#121212] min-h-screen pb-1">
       <UserBar />
       <br /><br /><br /><br /><br /><br />
-      <h1 className="text-4xl md:text-6xl font-extrabold text-[#8D6E63] drop-shadow-md mb-4 text-center">
+      <h1 className="mb-4 text-6xl font-extrabold text-center text-transparent bg-gradient-to-r from-gray-300 to-white bg-clip-text">
         SCOREBOARD
       </h1> <br /><br />
       

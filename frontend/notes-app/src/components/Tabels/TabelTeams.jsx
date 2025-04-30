@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-const TabelTeams = () => {
+const TabelTeams = ({ searchTerm }) => {
     const [teams, setTeams] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -22,6 +22,10 @@ const TabelTeams = () => {
 
         fetchTeams();
     }, []);
+
+    const filteredTeams = teams.filter(team =>
+        team.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
 
     if (loading) {
         return <p className="text-center text-white">Loading...</p>;
@@ -44,8 +48,8 @@ const TabelTeams = () => {
                         </tr>
                     </thead>
                     <tbody className="divide-y">
-                        {teams.length > 0 ? (
-                            teams.map((team) => (
+                        {filteredTeams.length > 0 ? (
+                            filteredTeams.map((team) => (
                                 <tr
                                     key={team._id}
                                     className="bg-[#292929] hover:bg-[#424242] border border-[#424242]"
@@ -70,8 +74,21 @@ const TabelTeams = () => {
                                     <td className="px-6 py-4 text-gray-300 whitespace-nowrap">
                                         Affiliation
                                     </td>
-                                    <td className="px-6 py-4 text-gray-300 whitespace-nowrap">
-                                        Tunisia
+                                    <td className="flex flex-row gap-1 px-6 py-4 text-gray-300 whitespace-nowrap">
+                                    {team?.country ? ( <>
+                                        <span>{team.country}</span>
+                                        <img
+                                            src={`https://cdn.jsdelivr.net/npm/react-flagkit@1.0.2/img/SVG/${team.country}.svg`}
+                                            alt={`${team.country} Flag`}
+                                            style={{ width: '20px', height: '20px' }}
+                                            onError={(e) => {
+                                            e.target.src = 'https://example.com/path/to/fallback-flag.svg'; // fallback image
+                                            }}
+                                        />
+                                        </>
+                                    ) : (
+                                        <span className="italic text-gray-400"></span>
+                                    )}
                                     </td>
                                 </tr>
                             ))

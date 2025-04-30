@@ -433,13 +433,15 @@ app.get("/api/challenges/solved-by-user/:userId", async (req, res) => {
 app.get('/api/users-with-teams', async (req, res) => {
     try {
         // Fetch all users and populate the team name using teamId
-        const users = await User.find({ isBanned: false, isHidden: false, isAdmin: false}).select('fullName teamId'); // Select only fullName and teamId
+        const users = await User.find({ isBanned: false, isHidden: false, isAdmin: false}).select('fullName teamId country link'); // Select only fullName and teamId
         // Map through the users and add the team name
         const usersWithTeams = await Promise.all(
             users.map(async (user) => {
                 const team = await Team.findById(user.teamId).select('name'); // Get the team name
                 return {
                     fullName: user.fullName,
+                    country: user.country,
+                    link: user.link,
                     team: team ? team.name : 'No Team', // If teamId is null, set team to 'No Team'
                 };
             })
@@ -455,7 +457,7 @@ app.get('/api/teams', async (req, res) => {
   try {
     // Fetch teams where isBanned and isHidden are false
     const teams = await Team.find({ isBanned: false, isHidden: false })
-      .select('name link points');
+      .select('name link points country');
     
     res.status(200).json(teams);
   } catch (error) {

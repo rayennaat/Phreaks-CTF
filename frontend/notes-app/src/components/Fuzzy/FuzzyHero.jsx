@@ -1,15 +1,11 @@
 import React from "react";
 import { motion } from "framer-motion";
-import black from "../../assets/images/black-noise.png"
-import noise from "../../assets/images/noise.png"
-import phreaks from "../../assets/images/Phreaks.png"
-import favicon from "../../assets/images/favicon.png"
-
+import black from "../../assets/images/black-noise.png";
+import phreaks from "../../assets/images/Phreaks.png";
+import freaks from "../../assets/images/freaks-mascott.png";
 
 const FuzzyOverlayExample = () => {
   return (
-    // NOTE: An overflow of hidden will be required on a wrapping
-    // element to see expected results
     <div className="relative overflow-hidden">
       <ExampleContent />
       <FuzzyOverlay />
@@ -30,12 +26,8 @@ const FuzzyOverlay = () => {
         ease: "linear",
         repeatType: "mirror",
       }}
-      // You can download these PNGs here:
-      // https://www.hover.dev/black-noise.png
-      // https://www.hover.dev/noise.png
       style={{
         backgroundImage: `url(${black})`,
-        // backgroundImage: 'url("/noise.png")',
       }}
       className="pointer-events-none absolute -inset-[100%] opacity-[15%]"
     />
@@ -45,13 +37,18 @@ const FuzzyOverlay = () => {
 const ExampleContent = () => {
   return (
     <div className="relative grid h-screen p-8 space-y-6 place-content-center bg-neutral-950">
-      <img src={phreaks} alt="" />
+      <img src={phreaks} alt="Phreaks Logo" />
       <h1 className="text-center text-neutral-400">
         ARE YOU READY TO START <b className="">PWNING?</b> 📺
-      </h1>
+      </h1><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
       
-      <div className="flex items-center justify-center gap-3">
-      <img src={favicon} alt="" />
+      {/* Mascot container - now at bottom center */}
+      <div className="absolute left-0 right-0 flex justify-center bottom-1">
+        <img 
+          src={freaks} 
+          alt="Freaks Mascot" 
+          className="w-[250px] h-auto" // Adjust size as needed
+        />
       </div>
     </div>
   );

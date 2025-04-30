@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 
-const SearchTeam = () => {
+const SearchUser = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState("Name");
   const dropdownRef = useRef(null);
 
-  const options = ["Name"];
+  const options = ["Name", "Team"];
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
@@ -67,4 +67,4 @@ const SearchTeam = () => {
   );
 };
 
-export default SearchTeam;
+export default SearchUser;

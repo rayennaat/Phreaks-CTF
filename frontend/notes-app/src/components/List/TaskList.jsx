@@ -133,18 +133,20 @@ const TaskList = ({ teamId }) => {
                 <td className="px-4 py-4 text-sm text-gray-300 whitespace-nowrap">
                   {new Date(task.time).toLocaleString()}
                 </td>
-                <td className="px-4 py-4 text-sm text-center whitespace-nowrap">
-                  <button
-                    onClick={() =>
-                      navigate(
-                        `/create-writeups?challenge=${encodeURIComponent(task.title)}&category=${encodeURIComponent(task.category)}`
-                      )
-                    }
-                    className="text-gray-400 transition-colors hover:text-pink-500"
-                    title="Write a Writeup"
-                  >
-                    <FaPenNib size={16} />
-                  </button>
+                <td className="px-4 py-4 text-sm whitespace-nowrap">
+                  <div className="flex justify-start ml-5">
+                    <button
+                      onClick={() =>
+                        navigate(
+                          `/create-writeups?challenge=${encodeURIComponent(task.title)}&category=${encodeURIComponent(task.category)}`
+                        )
+                      }
+                      title="Write a Writeup"
+                      className="text-gray-400 hover:text-pink-500"
+                    >
+                      <FaPenNib size={16} />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
