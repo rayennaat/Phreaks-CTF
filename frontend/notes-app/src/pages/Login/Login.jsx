@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom'; // Import Link
-import { validateEmail } from '../../utils/Helper';
+import { validateEmail } from '../../utils/helper';
 import axiosInstance from '../../utils/axiosInstance';
 import Navbar2 from '../../components/Navbar2/Navbar2';
 import google from '../../assets/images/search.png';
