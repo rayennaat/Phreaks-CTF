@@ -13,7 +13,7 @@ const Writeups = () => {
   useEffect(() => {
     const fetchWriteups = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/writeups');
+        const response = await fetch('https://phreaks-ctf.onrender.com/api/writeups');
         if (!response.ok) {
           throw new Error('Failed to fetch writeups');
         }

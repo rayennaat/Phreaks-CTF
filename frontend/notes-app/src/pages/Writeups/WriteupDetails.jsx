@@ -19,12 +19,12 @@ const WriteupDetails = () => {
         const token = localStorage.getItem("accessToken");
         const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-        const writeupResponse = await axios.get(`http://localhost:5000/api/writeups/${id}`, { headers });
+        const writeupResponse = await axios.get(`https://phreaks-ctf.onrender.com/api/writeups/${id}`, { headers });
         setWriteup(writeupResponse.data);
         setLikesCount(writeupResponse.data.likes?.length || 0);
 
         if (token) {
-          const userResponse = await axios.get('http://localhost:5000/get-user', {
+          const userResponse = await axios.get('https://phreaks-ctf.onrender.com/get-user', {
             headers: { Authorization: `Bearer ${token}` },
             params: { _: Date.now() },
           });
@@ -55,7 +55,7 @@ const WriteupDetails = () => {
       }
   
       const response = await axios.post(
-        `http://localhost:5000/api/writeups/${id}/like`,
+        `https://phreaks-ctf.onrender.com/api/writeups/${id}/like`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -75,7 +75,7 @@ const WriteupDetails = () => {
     images.forEach((img) => {
       const src = img.getAttribute('src');
       if (src?.startsWith('/uploads')) {
-        img.setAttribute('src', `http://localhost:5000${src}`);
+        img.setAttribute('src', `https://phreaks-ctf.onrender.com${src}`);
       }
     });
     return doc.body.innerHTML;

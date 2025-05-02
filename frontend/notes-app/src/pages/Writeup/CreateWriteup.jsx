@@ -62,7 +62,7 @@ const CreateWriteup = () => {
       };
   
       const response = await axios.post(
-        "http://localhost:5000/api/writeups",
+        "https://phreaks-ctf.onrender.com/api/writeups",
         payload,
         config
       );
