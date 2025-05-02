@@ -10,7 +10,7 @@ const TasksSolved = ({ userId }) => {
     const fetchSolvedChallenges = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/challenges/solved-by-user/${userId}`
+          `https://phreaks-ctf.onrender.com/api/challenges/solved-by-user/${userId}`
         );
         setSolvedChallenges(response.data);
       } catch (err) {

@@ -9,7 +9,7 @@ const TabelScore = () => {
     useEffect(() => {
         const fetchTeams = async () => {
             try {
-                const response = await fetch("http://localhost:5000/api/teams-admin");
+                const response = await fetch("https://phreaks-ctf.onrender.com/api/teams-admin");
                 if (!response.ok) {
                     throw new Error("Failed to fetch teams");
                 }

@@ -38,7 +38,7 @@ const Team = () => {
           return;
         }
 
-        const response = await axios.get('http://localhost:5000/get-team', {
+        const response = await axios.get('https://phreaks-ctf.onrender.com/get-team', {
           headers: { Authorization: `Bearer ${token}` }
         });
 
@@ -90,7 +90,7 @@ const Team = () => {
           <div className="flex-1 bg-[#212121] p-6">
             <div className="flex flex-col items-center gap-4 sm:flex-row md:gap-8 lg:gap-12">
               <img
-                src={`http://localhost:5000/${teamDetails.profilePic}`}
+                src={`https://phreaks-ctf.onrender.com/${teamDetails.profilePic}`}
                 alt="Team Logo"
                 className="object-cover w-24 h-24 rounded-full"
                 onError={(e) => {

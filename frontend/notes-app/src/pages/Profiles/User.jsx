@@ -31,7 +31,7 @@ const User = () => {
           return;
         }
   
-        const response = await axios.get('http://localhost:5000/get-user', {
+        const response = await axios.get('https://phreaks-ctf.onrender.com/get-user', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -76,7 +76,7 @@ const User = () => {
         <div className="flex justify-between p-10">
           <div className="flex flex-row gap-4">
           <img
-              src={`http://localhost:5000/${profilePic}` }
+              src={`https://phreaks-ctf.onrender.com/${profilePic}` }
               alt="Profile"
               className="object-cover w-20 h-20 rounded-full"
             />

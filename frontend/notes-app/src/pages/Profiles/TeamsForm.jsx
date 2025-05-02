@@ -27,7 +27,7 @@ const TeamsForm = ({ teamId, onUpdateTeamDetails }) => {
       if (teamBio) requestBody.bio = teamBio;
 
       await axios.post(
-        `http://localhost:5000/api/teams/${teamId}/details`,
+        `https://phreaks-ctf.onrender.com/api/teams/${teamId}/details`,
         requestBody,
         {
           headers: {
@@ -66,7 +66,7 @@ const TeamsForm = ({ teamId, onUpdateTeamDetails }) => {
 
       // Update basic info (PUT)
       const response = await axios.post(
-        `http://localhost:5000/api/teams/${teamId}`,
+        `https://phreaks-ctf.onrender.com/api/teams/${teamId}`,
         formData,
         {
           headers: {

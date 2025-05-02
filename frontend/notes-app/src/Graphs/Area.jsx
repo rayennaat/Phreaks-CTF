@@ -9,7 +9,7 @@ const AreaChartComponent = ({ teamId }) => {
   useEffect(() => {
     const fetchChallenges = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/challenges');
+        const response = await axios.get('https://phreaks-ctf.onrender.com/api/challenges');
         const challenges = response.data;
 
         // Filter tasks solved by the team

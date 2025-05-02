@@ -15,7 +15,7 @@ const TeamRadar = ({ teamId }) => {
   useEffect(() => {
     const fetchSolvedChallenges = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/challenges');
+        const response = await axios.get('https://phreaks-ctf.onrender.com/api/challenges');
         const challenges = response.data;
 
         const allCategories = [...new Set(challenges.map(challenge => challenge.category))];

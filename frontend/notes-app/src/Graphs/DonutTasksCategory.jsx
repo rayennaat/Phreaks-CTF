@@ -14,7 +14,7 @@ const DonutTasksCategory = ({ userId }) => {
   useEffect(() => {
     const fetchSolvedCategories = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/challenges');
+        const response = await axios.get('https://phreaks-ctf.onrender.com/api/challenges');
         const challenges = response.data;
 
         // Get all categories from challenges

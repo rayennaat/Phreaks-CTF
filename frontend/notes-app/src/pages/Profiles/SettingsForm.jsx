@@ -25,7 +25,7 @@ const SettingsForm = ({ userId }) => {
       if (link) requestBody.link = link;
   
       await axios.post(
-        `http://localhost:5000/api/users/${userId}/details`,
+        `https://phreaks-ctf.onrender.com/api/users/${userId}/details`,
         requestBody,
         {
           headers: {
@@ -68,7 +68,7 @@ const SettingsForm = ({ userId }) => {
   
       // Update basic info (PUT)
       const response = await axios.post(
-        `http://localhost:5000/api/users/${userId}`,
+        `https://phreaks-ctf.onrender.com/api/users/${userId}`,
         formData,
         {
           headers: {

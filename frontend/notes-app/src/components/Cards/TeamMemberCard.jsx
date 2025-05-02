@@ -8,7 +8,7 @@ const TeamPage = ({ teamId }) => {
     const fetchMembers = async () => {
       try {
         const token = localStorage.getItem('accessToken');
-        const response = await axios.get(`http://localhost:5000/api/teams/${teamId}/members`, {
+        const response = await axios.get(`https://phreaks-ctf.onrender.com/api/teams/${teamId}/members`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -40,7 +40,7 @@ const TeamPage = ({ teamId }) => {
               >
                 <img
                 className="object-cover w-32 h-32 rounded-full ring-4 ring-gray-300 dark:ring-gray-600"
-                src={ `http://localhost:5000/${member.profilePic}`}
+                src={ `https://phreaks-ctf.onrender.com/${member.profilePic}`}
                 alt={member.fullName}
               />
                 <h1 className="mt-4 text-2xl font-semibold text-gray-100 capitalize dark:text-white">

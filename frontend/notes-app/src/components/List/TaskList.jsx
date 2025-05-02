@@ -15,7 +15,7 @@ const TaskList = ({ teamId }) => {
 
     const fetchSolvedChallenges = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/team/solved-challenges/${teamId}`);
+        const response = await axios.get(`https://phreaks-ctf.onrender.com/team/solved-challenges/${teamId}`);
         setTasks(response.data);
       } catch (error) {
         console.error("Error fetching solved challenges:", error);
