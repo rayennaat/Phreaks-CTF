@@ -10,7 +10,7 @@ const TabelTeams = ({ searchTerm }) => {
     useEffect(() => {
         const fetchTeams = async () => {
             try {
-                const response = await axios.get("http://localhost:5000/api/teams");
+                const response = await axios.get("https://phreaks-ctf.onrender.com/api/teams");
                 setTeams(response.data);
             } catch (err) {
                 console.error("Error fetching teams:", err);

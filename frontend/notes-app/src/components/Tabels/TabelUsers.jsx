@@ -10,7 +10,7 @@ const TabelUsers = ({ searchTerm }) => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/users-with-teams");
+        const response = await axios.get("https://phreaks-ctf.onrender.com/api/users-with-teams");
         setUsers(response.data);
       } catch (err) {
         console.error("Error fetching users:", err);
