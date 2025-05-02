@@ -16,7 +16,7 @@ const Task = ({ task, onClose }) => {
 
     const userIds = task.solvedByUsers.map(entry => entry.user_id).join(",");
 
-    fetch(`http://localhost:5000/api/users/solved?userIds=${userIds}`)
+    fetch(`https://phreaks-ctf.onrender.com/api/users/solved?userIds=${userIds}`)
       .then(res => {
         if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
         return res.json();
@@ -52,7 +52,7 @@ const Task = ({ task, onClose }) => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/submit-challenge/${task._id}`, {
+      const response = await fetch(`https://phreaks-ctf.onrender.com/submit-challenge/${task._id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -90,7 +90,7 @@ const Task = ({ task, onClose }) => {
     try {
       const userIds = task.solvedByUsers.map(entry => entry.user_id).join(",");
 
-      const response = await fetch(`http://localhost:5000/api/users/solved?userIds=${userIds}`);
+      const response = await fetch(`https://phreaks-ctf.onrender.com/api/users/solved?userIds=${userIds}`);
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
       const userData = await response.json();
 
@@ -159,7 +159,7 @@ const Task = ({ task, onClose }) => {
                   Resource:
                 </p>
                 <a
-                  href={`http://localhost:5000${task.resource}`}
+                  href={`https://phreaks-ctf.onrender.com${task.resource}`}
                   download
                   className="text-white hover:underline hover:text-gray-300"
                 >
