@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { FiLock, FiUnlock, FiFilter, FiX } from "react-icons/fi";
 import { motion } from "framer-motion";
 import Task from "../Task/Task";
-import axios from "../../utils/axiosInstance";
+import axios from "axios";
 
 const TaskCard = () => {
   const [challenges, setChallenges] = useState([]);
@@ -21,7 +21,7 @@ const TaskCard = () => {
         const token = localStorage.getItem("accessToken");
         if (!token) return;
 
-        const response = await axios.get("/get-teamid", {
+        const response = await axios.get("https://phreaks-ctf.onrender.com/get-teamid", {
           headers: { Authorization: `Bearer ${token}` },
           params: { _: Date.now() },
         });
@@ -38,7 +38,7 @@ const TaskCard = () => {
   }, []);
 
   useEffect(() => {
-    fetch("/api/challenges")
+    fetch("https://phreaks-ctf.onrender.com/api/challenges")
       .then((response) => response.json())
       .then((data) => {
         setChallenges(data);
