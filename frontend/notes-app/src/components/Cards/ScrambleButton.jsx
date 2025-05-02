@@ -21,7 +21,7 @@ const TaskCard = () => {
         const token = localStorage.getItem("accessToken");
         if (!token) return;
 
-        const response = await axios.get("https://phreaks-ctf-frontend.onrender.com/get-teamid", {
+        const response = await axios.get("https://phreaks-ctf.onrender.com/get-teamid", {
           headers: { Authorization: `Bearer ${token}` },
           params: { _: Date.now() },
         });
@@ -38,7 +38,7 @@ const TaskCard = () => {
   }, []);
 
   useEffect(() => {
-    fetch("https://phreaks-ctf-frontend.onrender.com/api/challenges")
+    fetch("https://phreaks-ctf.onrender.com/api/challenges")
       .then((response) => response.json())
       .then((data) => {
         setChallenges(data);
