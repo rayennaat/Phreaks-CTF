@@ -21,7 +21,7 @@ const TaskCard = () => {
         const token = localStorage.getItem("accessToken");
         if (!token) return;
 
-        const response = await axios.get("http://localhost:5000/get-teamid", {
+        const response = await axios.get("/get-teamid", {
           headers: { Authorization: `Bearer ${token}` },
           params: { _: Date.now() },
         });
@@ -38,7 +38,7 @@ const TaskCard = () => {
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/challenges")
+    fetch("/api/challenges")
       .then((response) => response.json())
       .then((data) => {
         setChallenges(data);
