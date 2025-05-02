@@ -4,6 +4,9 @@ import { validateEmail } from '../../utils/helper';
 import axiosInstance from '../../utils/axiosInstance';
 import Navbar2 from '../../components/Navbar2/Navbar2';
 import google from '../../assets/images/search.png';
+import { FaRegEye } from "react-icons/fa6";
+import { FaRegEyeSlash } from "react-icons/fa6";
+
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -91,9 +94,9 @@ const Login = () => {
                 className="absolute inset-y-0 right-0 flex items-center pr-3 mt-6 text-gray-400 hover:text-gray-300"
               >
                 {showPassword ? (
-                  <span className="text-sm">👁️</span> // Eye with slash when password is visible
+                  <FaRegEye/> // Eye with slash when password is visible
                 ) : (
-                  <span className="text-sm">👁️</span> // Regular eye when password is hidden
+                  <FaRegEyeSlash/> // Regular eye when password is hidden
                 )}
               </button>
             </div>
