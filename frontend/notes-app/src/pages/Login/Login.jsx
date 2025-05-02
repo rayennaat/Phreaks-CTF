@@ -91,13 +91,9 @@ const Login = () => {
               <button
                 type="button"
                 onClick={togglePasswordVisibility}
-                className="absolute inset-y-0 right-0 flex items-center pr-3 mt-6 text-gray-400 hover:text-gray-300"
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-300"
               >
-                {showPassword ? (
-                  <FaRegEye/> // Eye with slash when password is visible
-                ) : (
-                  <FaRegEyeSlash/> // Regular eye when password is hidden
-                )}
+                {showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
               </button>
             </div>
             {error && <p className="text-sm text-red-500">{error}</p>}
