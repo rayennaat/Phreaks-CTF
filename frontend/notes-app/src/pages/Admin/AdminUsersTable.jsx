@@ -17,7 +17,7 @@ export default function AdminUsersTable() {
 
   // Fetch users from API
   useEffect(() => {
-    fetch("http://localhost:5000/api/users") // Use the correct endpoint
+    fetch("https://phreaks-ctf.onrender.com/api/users") // Use the correct endpoint
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -83,7 +83,7 @@ export default function AdminUsersTable() {
       // If isBanned is false, reset banReason to an empty string
       const updatedBanReason = isBanned ? banReason : "";
   
-      const response = await fetch(`http://localhost:5000/api/users/${editingUser.id}`, {
+      const response = await fetch(`https://phreaks-ctf.onrender.com/api/users/${editingUser.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -127,7 +127,7 @@ export default function AdminUsersTable() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/users/delete", {
+      const response = await fetch("https://phreaks-ctf.onrender.com/api/users/delete", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -144,7 +144,7 @@ export default function AdminUsersTable() {
       console.log("Users deleted:", data.message);
 
       // Refetch users to update the table
-      fetch("http://localhost:5000/api/users")
+      fetch("https://phreaks-ctf.onrender.com/api/users")
         .then((response) => {
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);

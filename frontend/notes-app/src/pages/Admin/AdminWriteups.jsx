@@ -19,7 +19,7 @@ export default function AdminWriteups() {
   // Fetch writeups from backend
   async function fetchWriteups() {
     try {
-      const res = await fetch("http://localhost:5000/api/writeups/admin"); // New API route for admin
+      const res = await fetch("https://phreaks-ctf.onrender.com/api/writeups/admin"); // New API route for admin
       const data = await res.json();
       setPendingWriteups(data.pending);
       setApprovedWriteups(data.approved);
@@ -31,7 +31,7 @@ export default function AdminWriteups() {
   // Approve a writeup
   async function approveWriteup(id) {
     try {
-      const res = await fetch(`http://localhost:5000/api/writeups/${id}/approve`, {
+      const res = await fetch(`https://phreaks-ctf.onrender.com/api/writeups/${id}/approve`, {
         method: "PUT",
       });
 
@@ -61,7 +61,7 @@ export default function AdminWriteups() {
     try {
       if (deleteType === "single") {
         // Delete a single approved writeup
-        await fetch(`http://localhost:5000/api/writeups/${deleteId}`, {
+        await fetch(`https://phreaks-ctf.onrender.com/api/writeups/${deleteId}`, {
           method: "DELETE",
         });
         setApprovedWriteups((prev) => prev.filter((w) => w._id !== deleteId));
@@ -69,7 +69,7 @@ export default function AdminWriteups() {
   
       } else if (deleteType === "pendingSingle") {
         // Delete a single pending writeup
-        await fetch(`http://localhost:5000/api/writeups/${deleteId}`, {
+        await fetch(`https://phreaks-ctf.onrender.com/api/writeups/${deleteId}`, {
           method: "DELETE",
         });
         setPendingWriteups((prev) => prev.filter((w) => w._id !== deleteId));
@@ -77,7 +77,7 @@ export default function AdminWriteups() {
   
       } else {
         // Delete all approved writeups
-        await fetch("http://localhost:5000/api/writeups", {
+        await fetch("https://phreaks-ctf.onrender.com/api/writeups", {
           method: "DELETE",
         });
         setApprovedWriteups([]);

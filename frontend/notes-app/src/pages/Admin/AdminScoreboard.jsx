@@ -12,7 +12,7 @@ export default function AdminScoreboard() {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const res = await fetch("http://localhost:5000/api/users");
+                const res = await fetch("https://phreaks-ctf.onrender.com/users");
                 const data = await res.json();
                 setUsers(data.sort((a, b) => b.points - a.points)); // Sort users by points
             } catch (error) {
@@ -22,7 +22,7 @@ export default function AdminScoreboard() {
 
         const fetchTeams = async () => {
             try {
-                const res = await fetch("http://localhost:5000/api/teams");
+                const res = await fetch("https://phreaks-ctf.onrender.com/teams");
                 const data = await res.json();
                 setTeams(data.sort((a, b) => b.points - a.points)); // Sort teams by points
             } catch (error) {

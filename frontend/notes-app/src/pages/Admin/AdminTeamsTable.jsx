@@ -17,7 +17,7 @@ export default function AdminTeamsTable() {
 
   // Fetch teams from API
   useEffect(() => {
-    fetch("http://localhost:5000/api/teams-admin")
+    fetch("https://phreaks-ctf.onrender.com/api/teams-admin")
       .then((response) => response.json())
       .then((teams) => {
         const formattedTeams = teams.map((team) => ({
@@ -69,7 +69,7 @@ export default function AdminTeamsTable() {
       // If isBanned is false, reset banReason to an empty string
       const updatedBanReason = isBanned ? banReason : "";
 
-      const response = await fetch(`http://localhost:5000/api/teams/${editingTeam.id}`, {
+      const response = await fetch(`https://phreaks-ctf.onrender.com/api/teams/${editingTeam.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -114,7 +114,7 @@ export default function AdminTeamsTable() {
 
     try {
       // Send a DELETE request to the backend
-      const response = await fetch("http://localhost:5000/api/teams/delete", {
+      const response = await fetch("https://phreaks-ctf.onrender.com/api/teams/delete", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -131,7 +131,7 @@ export default function AdminTeamsTable() {
       console.log("Teams deleted:", data.message);
 
       // Refetch teams to update the table
-      fetch("http://localhost:5000/api/teams-admin")
+      fetch("https://phreaks-ctf.onrender.com/api/teams-admin")
         .then((response) => response.json())
         .then((teams) => {
           const formattedTeams = teams.map((team) => ({

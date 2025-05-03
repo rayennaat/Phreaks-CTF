@@ -45,7 +45,7 @@ export default function AdminChallenges() {
   useEffect(() => {
     const fetchChallenges = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/challenges"); // Use the correct endpoint
+        const response = await fetch("https://phreaks-ctf.onrender.com/api/challenges"); // Use the correct endpoint
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -109,7 +109,7 @@ export default function AdminChallenges() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/add-challenge", {
+      const response = await fetch("https://phreaks-ctf.onrender.com/add-challenge", {
         method: "POST",
         body: formData,
       });
@@ -169,7 +169,7 @@ export default function AdminChallenges() {
   // Fetch challenges from API
   const fetchChallenges = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/challenges"); // Use the correct endpoint
+      const response = await fetch("https://phreaks-ctf.onrender.com/api/challenges"); // Use the correct endpoint
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -209,12 +209,12 @@ const confirmDelete = async () => {
     let response;
     if (selectedRows.length === challenges.length) {
       // Delete all challenges
-      response = await fetch("http://localhost:5000/api/all-challenges", {
+      response = await fetch("https://phreaks-ctf.onrender.com/api/all-challenges", {
         method: "DELETE",
       });
     } else {
       // Delete specific challenges
-      response = await fetch("http://localhost:5000/api/delete-challenges", {
+      response = await fetch("https://phreaks-ctf.onrender.com/api/delete-challenges", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -262,7 +262,7 @@ const handleEdit = async (id) => {
   console.log("Editing challenge with ID:", id); // Log the ID
   try {
     const cleanedId = String(id).trim(); // Convert `id` to a string and trim it
-    const response = await fetch(`http://localhost:5000/api/challenges/${cleanedId}`);
+    const response = await fetch(`https://phreaks-ctf.onrender.com/api/challenges/${cleanedId}`);
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
@@ -318,7 +318,7 @@ const handleEditChallenge = async (e) => {
   try {
     console.log("Sending form data:", Object.fromEntries(formData)); // Log the form data
 
-    const response = await fetch(`http://localhost:5000/api/challenges/${editingChallenge._id}`, {
+    const response = await fetch(`https://phreaks-ctf.onrender.com/api/challenges/${editingChallenge._id}`, {
       method: "PUT",
       body: formData, // Send FormData
     });

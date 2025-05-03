@@ -25,7 +25,7 @@ export default function AdminSubmissions() {
 
     const fetchSubmissions = async () => {
         try {
-            const response = await axios.get("http://localhost:5000/api/submissions"); // Correct API URL
+            const response = await axios.get("https://phreaks-ctf.onrender.com/submissions"); // Correct API URL
             setSubmissions(response.data);
         } catch (error) {
             console.error("Error fetching submissions:", error);
@@ -41,7 +41,7 @@ export default function AdminSubmissions() {
     const confirmDelete = async () => {
         try {
             if (deleteType === "single") {
-                await axios.delete(`http://localhost:5000/submissions/${deleteId}`); // Correct URL
+                await axios.delete(`https://phreaks-ctf.onrender.com/submissions/${deleteId}`); // Correct URL
                 setSubmissions(submissions.filter(sub => sub._id !== deleteId));
                 toast.success("Submission deleted successfully!", {
                     position: "top-right",
@@ -52,7 +52,7 @@ export default function AdminSubmissions() {
                     draggable: true,
                 });
             } else {
-                await axios.delete("http://localhost:5000/submissions");
+                await axios.delete("https://phreaks-ctf.onrender.com/submissions");
                 setSubmissions([]);
                 toast.success("All submissions deleted successfully!", {
                     position: "top-right",
