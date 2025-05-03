@@ -25,7 +25,7 @@ export default function AdminSubmissions() {
 
     const fetchSubmissions = async () => {
         try {
-            const response = await axios.get("https://phreaks-ctf.onrender.com/submissions"); // Correct API URL
+            const response = await axios.get("https://phreaks-ctf.onrender.com/api/submissions"); // Correct API URL
             setSubmissions(response.data);
         } catch (error) {
             console.error("Error fetching submissions:", error);
