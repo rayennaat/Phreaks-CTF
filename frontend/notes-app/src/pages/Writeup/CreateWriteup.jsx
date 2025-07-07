@@ -1,34 +1,36 @@
 import React, { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom"; // Import useSearchParams
+import { useSearchParams } from "react-router-dom";
 import axios from "axios";
-import { toast, ToastContainer } from "react-toastify"; // Import toast and ToastContainer
-import "react-toastify/dist/ReactToastify.css"; // Import the CSS
-import {
-  EditorComposer,
-  Editor,
-  ToolbarPlugin,
-  AlignDropdown,
-  BackgroundColorPicker,
-  BoldButton,
-  CodeFormatButton,
-  FontFamilyDropdown,
-  FontSizeDropdown,
-  InsertDropdown,
-  InsertLinkButton,
-  ItalicButton,
-  TextColorPicker,
-  TextFormatDropdown,
-  UnderlineButton,
-  Divider,
-} from "verbum";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import JoditEditor from "jodit-react";
 
 const CreateWriteup = () => {
   const [summary, setSummary] = useState("");
   const [description, setDescription] = useState("");
-  const [author, setAuthor] = useState(""); // User will enter their name manually
-  const [searchParams] = useSearchParams(); // Use URL params
+  const [author, setAuthor] = useState("");
+  const [searchParams] = useSearchParams();
   const [challengeTitle, setChallengeTitle] = useState("");
   const [category, setCategory] = useState("");
+  const editor = useRef(null);
+
+  // Jodit editor configuration
+  const editorConfig = {
+    uploader: {
+      insertImageAsBase64URI: true,
+    },
+    buttons: [
+      'bold', 'italic', 'underline', '|', 
+      'ul', 'ol', '|', 
+      'image', 'link', '|', 
+      'undo', 'redo'
+    ],
+    height: 400,
+    width: '100%',
+    readonly: false,
+    toolbarAdaptive: false,
+    theme: 'dark'
+  };
 
   // Extract title & category from the URL
   useEffect(() => {
@@ -52,19 +54,14 @@ const CreateWriteup = () => {
         title: challengeTitle,
       };
   
-      // Configure axios for large payloads
-      const config = {
-        maxContentLength: Infinity,
-        maxBodyLength: Infinity,
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      };
-  
       const response = await axios.post(
         "https://phreaks-ctf.onrender.com/api/writeups",
         payload,
-        config
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        }
       );
   
       if (response.status === 201) {
@@ -78,7 +75,6 @@ const CreateWriteup = () => {
 
   return (
     <div className="min-h-screen p-6 text-white bg-gray-900">
-      {/* Toast Container */}
       <ToastContainer
         position="top-right"
         autoClose={3000}
@@ -105,38 +101,27 @@ const CreateWriteup = () => {
           onChange={(e) => setSummary(e.target.value)}
         />
 
-        {/* Description Editor */}
+        {/* Description Editor - Now using Jodit */}
         <h2 className="mt-6 mb-3 ml-20 text-2xl font-bold">Writeup Content</h2>
-        <EditorComposer>
-          <Editor
-            placeholder="Start writing your writeup here..."
-            hashtagsEnabled={true}
-            className="min-h-[400px] p-4 text-white bg-gray-800 rounded-lg shadow-md"
-            onChange={() => {
-              const content = document.querySelector('[data-lexical-editor]').innerHTML;
-              setDescription(content);
-            }}
-          >
-            <ToolbarPlugin className="flex p-2 overflow-x-auto bg-gray-700 border-b border-gray-600 flex-nowrap">
-              <div className="flex items-center gap-1 overflow-x-auto whitespace-nowrap">
-                <FontFamilyDropdown className="p-1 text-white bg-gray-600 rounded-md hover:bg-gray-500" />
-                <FontSizeDropdown className="p-1 text-white bg-gray-600 rounded-md hover:bg-gray-500" />
-                <Divider className="bg-gray-600" />
-                <BoldButton className="p-1 text-white bg-gray-600 rounded-md hover:bg-gray-500" />
-                <ItalicButton className="p-1 text-white bg-gray-600 rounded-md hover:bg-gray-500" />
-                <UnderlineButton className="p-1 text-white bg-gray-600 rounded-md hover:bg-gray-500" />
-                <CodeFormatButton className="p-1 text-white bg-gray-600 rounded-md hover:bg-gray-500" />
-                <InsertLinkButton className="p-1 text-white bg-gray-600 rounded-md hover:bg-gray-500" />
-                <TextColorPicker className="p-1 text-white bg-gray-600 rounded-md hover:bg-gray-500" />
-                <BackgroundColorPicker className="p-1 text-white bg-gray-600 rounded-md hover:bg-gray-500" />
-                <TextFormatDropdown className="p-1 text-white bg-gray-600 rounded-md hover:bg-gray-500" />
-                <Divider className="bg-gray-600" />
-                <InsertDropdown  enablePoll={true} className="p-1 text-white bg-gray-600 rounded-md hover:bg-gray-500" />
-                <AlignDropdown className="p-1 text-white bg-gray-600 rounded-md hover:bg-gray-500" />
-              </div>
-            </ToolbarPlugin>
-          </Editor>
-        </EditorComposer>
+        <div className="ml-20">
+          <JoditEditor
+            ref={editor}
+            value={description}
+            config={editorConfig}
+            onChange={(newContent) => setDescription(newContent)}
+            className="bg-gray-800 rounded-lg"
+          />
+        </div>
+
+        {/* Author Input */}
+        <h2 className="mt-6 mb-3 ml-20 text-2xl font-bold">Your Name</h2>
+        <input
+          type="text"
+          className="w-[990px] ml-20 p-2 rounded-md text-black"
+          placeholder="Enter your name"
+          value={author}
+          onChange={(e) => setAuthor(e.target.value)}
+        />
 
         {/* Submit Button */}
         <button

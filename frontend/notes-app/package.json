@@ -44,6 +44,7 @@
     "dompurify": "^3.2.4",
     "framer-motion": "^11.18.0",
     "highlight.js": "^11.11.1",
+    "jodit-react": "^5.2.19",
     "jquery": "^3.7.1",
     "moment": "^2.30.1",
     "react": "^18.3.1",
