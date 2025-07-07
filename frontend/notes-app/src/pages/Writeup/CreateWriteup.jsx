@@ -103,12 +103,12 @@ const CreateWriteup = () => {
 
         {/* Description Editor - Now using Jodit */}
         <h2 className="mt-6 mb-3 ml-20 text-2xl font-bold">Writeup Content</h2>
-        <div className="w-full max-w-3xl mt-10">
+        <div className="w-full max-w-4xl mt-10">
           <JoditEditor
             ref={editor}
             value={description}
             config={editorConfig}
-            className="rounded-lg"
+            className="bg-white rounded-lg"
           />
         </div>
 
