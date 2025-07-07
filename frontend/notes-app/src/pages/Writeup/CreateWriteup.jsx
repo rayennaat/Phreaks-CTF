@@ -104,14 +104,14 @@ const CreateWriteup = () => {
         {/* Description Editor - Now using Jodit */}
         <h2 className="mt-6 mb-3 ml-20 text-2xl font-bold">Writeup Content</h2>
         <div className="w-full max-w-4xl mt-10">
-        <JoditEditor
-          ref={editor}
-          value={content}
-          config={config}
-          onChange={(newContent) => setContent(newContent)}
-          className="rendered-html"
-        />
-      </div>
+          <JoditEditor
+            ref={editor}
+            value={description}
+            config={editorConfig}
+            onChange={(newContent) => setDescription(newContent)}
+            className="rounded-lg"
+          />
+        </div>
 
         {/* Submit Button */}
         <button
