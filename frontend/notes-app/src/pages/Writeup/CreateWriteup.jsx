@@ -108,7 +108,6 @@ const CreateWriteup = () => {
             ref={editor}
             value={description}
             config={editorConfig}
-            onChange={(newContent) => setDescription(newContent)}
             className="rounded-lg"
           />
         </div>
