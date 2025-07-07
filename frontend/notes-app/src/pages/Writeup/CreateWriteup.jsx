@@ -109,19 +109,9 @@ const CreateWriteup = () => {
             value={description}
             config={editorConfig}
             onChange={(newContent) => setDescription(newContent)}
-            className="bg-gray-800 rounded-lg"
+            className="rounded-lg"
           />
         </div>
-
-        {/* Author Input */}
-        <h2 className="mt-6 mb-3 ml-20 text-2xl font-bold">Your Name</h2>
-        <input
-          type="text"
-          className="w-[990px] ml-20 p-2 rounded-md text-black"
-          placeholder="Enter your name"
-          value={author}
-          onChange={(e) => setAuthor(e.target.value)}
-        />
 
         {/* Submit Button */}
         <button
