@@ -96,16 +96,6 @@ const CreateWriteup = () => {
         <h1 className="mb-6 text-3xl font-bold text-center md:text-6xl">{challengeTitle}</h1>
         <h3 className="text-center text-pink-400">{category}</h3>
 
-        {/* Author Input */}
-        <h2 className="mt-6 mb-3 ml-20 text-2xl font-bold">Your Name</h2>
-        <input
-          type="text"
-          className="w-[990px] ml-20 p-2 rounded-md text-black text-sm"
-          placeholder="Enter your name..."
-          value={author}
-          onChange={(e) => setAuthor(e.target.value)}
-        />
-
         {/* Summary Input */}
         <h2 className="mt-6 mb-3 ml-20 text-2xl font-bold">Summarize Your Writeup</h2>
         <textarea
