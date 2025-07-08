@@ -94,8 +94,7 @@ const CreateWriteup = () => {
             ref={editor}
             value={description}
             config={editorConfig}
-            className="bg-white rounded-lg"
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={(newContent) => setDescription(newContent)}
           />
         </div>
 
