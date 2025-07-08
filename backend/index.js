@@ -1021,7 +1021,7 @@ app.delete("/api/teams/delete", async (req, res) => {
 
   app.post("/api/writeups", async (req, res) => {
     try {
-      const { title, author, date, summary, description, category } = req.body;
+      const { title, date, summary, description, category } = req.body;
   
       if (!summary || !description) {
         return res.status(400).json({ message: "Summary and description are required." });
@@ -1029,7 +1029,6 @@ app.delete("/api/teams/delete", async (req, res) => {
   
       const newWriteup = new Writeup({
         title: title || "Untitled Writeup",
-        author,
         date: date || new Date(),
         summary,
         description,

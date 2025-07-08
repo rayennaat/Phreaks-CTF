@@ -19,17 +19,8 @@ const CreateWriteup = () => {
     uploader: {
       insertImageAsBase64URI: true,
     },
-    buttons: [
-      'bold', 'italic', 'underline', '|', 
-      'ul', 'ol', '|', 
-      'image', 'link', '|', 
-      'undo', 'redo'
-    ],
     height: 400,
     width: '100%',
-    readonly: false,
-    toolbarAdaptive: false,
-    theme: 'dark'
   };
 
   // Extract title & category from the URL
@@ -39,16 +30,11 @@ const CreateWriteup = () => {
   }, [searchParams]);
 
   const handleSubmit = async () => {
-    if (!author.trim()) {
-      toast.error("Please enter your name.");
-      return;
-    }
   
     try {
       const payload = {
         summary,
         description,
-        author,
         category,
         date: new Date(),
         title: challengeTitle,
@@ -109,6 +95,7 @@ const CreateWriteup = () => {
             value={description}
             config={editorConfig}
             className="bg-white rounded-lg"
+            onChange={(e) => setDescription(e.target.value)}
           />
         </div>
 
