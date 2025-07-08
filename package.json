@@ -1,6 +1,8 @@
 {
   "dependencies": {
+    "ace-builds": "^1.43.1",
     "chart.js": "^4.4.7",
+    "js-beautify": "^1.15.4",
     "react-chartjs-2": "^5.3.0"
   }
 }

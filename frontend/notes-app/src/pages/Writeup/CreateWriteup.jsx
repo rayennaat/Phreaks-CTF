@@ -19,7 +19,10 @@ const CreateWriteup = () => {
       uploader: {
         insertImageAsBase64URI: true,
       },
-
+      sourceEditorCDNUrls: {
+      beautifyUrl: beautify,
+      aceUrl: ace
+    },  
       height: 400,
       width: '100%',  
     }),
