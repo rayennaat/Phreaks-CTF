@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
@@ -14,13 +14,17 @@ const CreateWriteup = () => {
   const editor = useRef(null);
 
   // Jodit editor configuration
-  const editorConfig = {
-    uploader: {
-      insertImageAsBase64URI: true,
-    },
-    height: 400,
-    width: '100%',
-  };
+  const editorConfig = useMemo(
+    () => ({
+      uploader: {
+        insertImageAsBase64URI: true,
+      },
+
+      height: 400,
+      width: '100%',  
+    }),
+    []
+  )
 
   // Extract title & category from the URL
   useEffect(() => {
