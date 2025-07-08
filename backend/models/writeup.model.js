@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const writeupSchema = new Schema({
   title: { type: String, required: true },
-  author: { type: String, required: true },
+  author: { type: String, required: false },
   date: { type: Date, required: true },
   summary: { type: String, required: true },
   description: { type: String, required: true },
