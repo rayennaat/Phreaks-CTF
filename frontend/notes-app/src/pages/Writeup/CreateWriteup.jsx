@@ -8,7 +8,6 @@ import JoditEditor from "jodit-react";
 const CreateWriteup = () => {
   const [summary, setSummary] = useState("");
   const [description, setDescription] = useState("");
-  const [author, setAuthor] = useState("");
   const [searchParams] = useSearchParams();
   const [challengeTitle, setChallengeTitle] = useState("");
   const [category, setCategory] = useState("");
@@ -95,6 +94,7 @@ const CreateWriteup = () => {
             value={description}
             config={editorConfig}
             onChange={(newContent) => setDescription(newContent)}
+            className="text-black rendered-html"
           />
         </div>
 
