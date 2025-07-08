@@ -18,6 +18,8 @@ const editorConfig = useMemo(
   () => ({
     uploader: {
       insertImageAsBase64URI: true,
+      imagesExtensions: ['jpg', 'png', 'jpeg', 'gif', 'webp'],
+      maxFileSize: 10 * 1024 * 1024 // 10MB per image
     },
     height: 400,
     width: '100%',
@@ -55,7 +57,12 @@ const editorConfig = useMemo(
   }, [searchParams]);
 
   const handleSubmit = async () => {
-  
+    
+    if (description.length > 10_000_000) { // ~10MB
+      toast.error("Writeup too large - reduce image sizes");
+      return;
+    }
+
     try {
       const payload = {
         summary,
