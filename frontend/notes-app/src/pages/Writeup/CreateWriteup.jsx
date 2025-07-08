@@ -4,8 +4,6 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import JoditEditor from "jodit-react";
-import ace from 'ace-builds';
-import beautify from 'js-beautify';
 
 const CreateWriteup = () => {
   const [summary, setSummary] = useState("");
@@ -17,18 +15,20 @@ const CreateWriteup = () => {
 
   // Jodit editor configuration
   const editorConfig = useMemo(
-    () => ({
-      uploader: {
-        insertImageAsBase64URI: true,
-      },
-      sourceEditorCDNUrls: {
-      beautifyUrl: beautify,
-      aceUrl: ace
-    },  
-      height: 400,
-      width: '100%',  
-    }),
-    []
+  () => ({
+    uploader: {
+      insertImageAsBase64URI: true,
+    },
+    height: 400,
+    width: '100%',
+    disablePlugins: ['beautify', 'ace'], // Disable the plugins that try to load external scripts
+    sourceEditorCDNUrls: {
+      beautifyUrl: '', // Empty string prevents loading from CDN
+      aceUrl: '' // Empty string prevents loading from CDN
+    },
+    toolbarAdaptive: false
+  }),
+  []
   )
 
   // Extract title & category from the URL
