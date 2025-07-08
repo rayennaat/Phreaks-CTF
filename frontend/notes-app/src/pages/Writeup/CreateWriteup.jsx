@@ -4,6 +4,8 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import JoditEditor from "jodit-react";
+import ace from 'ace-builds';
+import beautify from 'js-beautify';
 
 const CreateWriteup = () => {
   const [summary, setSummary] = useState("");
