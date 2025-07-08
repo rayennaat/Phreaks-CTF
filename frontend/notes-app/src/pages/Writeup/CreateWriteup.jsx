@@ -14,22 +14,39 @@ const CreateWriteup = () => {
   const editor = useRef(null);
 
   // Jodit editor configuration
-  const editorConfig = useMemo(
+const editorConfig = useMemo(
   () => ({
     uploader: {
       insertImageAsBase64URI: true,
     },
     height: 400,
     width: '100%',
-    disablePlugins: ['beautify', 'ace'], // Disable the plugins that try to load external scripts
+    // Completely disable all external resource loading
+    disablePlugins: [
+      'source', 
+      'beautify',
+      'ace',
+      'xpath',
+      'stat',
+      'powered-by-jodit',
+      'about',
+      'mobile'
+    ],
+    // Block all CDN requests
     sourceEditorCDNUrls: {
-      beautifyUrl: '', // Empty string prevents loading from CDN
-      aceUrl: '' // Empty string prevents loading from CDN
+      beautifyUrl: null,
+      aceUrl: null
     },
-    toolbarAdaptive: false
+    // Additional security measures
+    allowTabNavigation: false,
+    toolbarAdaptive: false,
+    showCharsCounter: false,
+    showWordsCounter: false,
+    showXPathInStatusbar: false,
+    useSplitMode: false
   }),
   []
-  )
+);
 
   // Extract title & category from the URL
   useEffect(() => {
