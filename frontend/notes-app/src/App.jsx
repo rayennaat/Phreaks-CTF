@@ -22,6 +22,7 @@ import Writeups from './pages/Writeups/writeups';
 import CreateWriteup from './pages/Writeup/CreateWriteup';
 import WriteupDetails from './pages/Writeups/WriteupDetails';
 import AdminWriteups from './pages/Admin/AdminWriteups';
+import Notifications from './pages/Notifications/Notifications';
 
 
 
@@ -34,6 +35,7 @@ const routes= (
       <Route path='/challenges' exact element={<FuzzyOverlayExample />} />
       <Route path='/teams' exact element={<Teams/>} />
       <Route path='/users' exact element={<Users />} />
+      <Route path='/notifications' exact element={<Notifications />} />
       <Route path='/scoreboard' exact element={<Scoreboard    />} />
       <Route path='/team' exact element={<Team    />} />
       <Route path='/profileuser' exact element={<ProfileUser    />} />
