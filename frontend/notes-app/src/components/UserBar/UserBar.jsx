@@ -43,7 +43,7 @@ const UserBar = () => {
             Writeups
           </Link>
           <Link to="/writeups" className={navLinkStyle("/writeups")}>
-            <FaBell className="text-lg"/>
+            <FaBell className="text-white text-lg mt-0.5 cursor-pointer hover:text-gray-300" title="Notifications"/>
           </Link>   
         </div>
 
