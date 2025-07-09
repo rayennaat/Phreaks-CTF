@@ -43,7 +43,7 @@ const UserBar = () => {
             Writeups
           </Link>
           <Link to="/writeups" className={navLinkStyle("/writeups")}>
-            <FaBell/>
+            <FaBell className="text-lg"/>
           </Link>   
         </div>
 
