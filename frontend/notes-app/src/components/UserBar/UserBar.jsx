@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaSignOutAlt, FaUser, FaBars, FaTimes } from "react-icons/fa";
 import { FaUserGroup } from "react-icons/fa6";
-import { FaTools } from "react-icons/fa";
+import { FaTools, FaBell } from "react-icons/fa";
 
 const UserBar = () => {
   const location = useLocation();
@@ -42,6 +42,7 @@ const UserBar = () => {
           <Link to="/writeups" className={navLinkStyle("/writeups")}>
             Writeups
           </Link>
+          <FaBell className="text-white text-xs mt-0.5 cursor-pointer hover:text-gray-300" title="Notifications" />
         </div>
 
         {/* Mobile toggle button */}
