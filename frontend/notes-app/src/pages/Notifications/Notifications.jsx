@@ -32,7 +32,7 @@ const Notifications = () => {
           Notifications
         </h1>
 
-        <div className="flex flex-col items-center max-w-3xl gap-4 mx-auto">
+        <div className="flex flex-col items-center max-w-3xl gap-4 mx-auto mt-5">
           {dummyNotifications.map((notif) => (
             <div
               key={notif.id}
