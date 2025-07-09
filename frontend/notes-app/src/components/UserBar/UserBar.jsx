@@ -42,7 +42,9 @@ const UserBar = () => {
           <Link to="/writeups" className={navLinkStyle("/writeups")}>
             Writeups
           </Link>
-          <FaBell className={navLinkStyle("/writeups")}/>
+          <Link to="/writeups" className={navLinkStyle("/writeups")}>
+            <FaBell/>
+          </Link>   
         </div>
 
         {/* Mobile toggle button */}
