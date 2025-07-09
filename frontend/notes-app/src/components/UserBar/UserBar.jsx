@@ -42,7 +42,7 @@ const UserBar = () => {
           <Link to="/writeups" className={navLinkStyle("/writeups")}>
             Writeups
           </Link>
-          <FaBell className="text-white text-base mt-0.5 cursor-pointer hover:text-gray-300" title="Notifications" />
+          <FaBell className={navLinkStyle("/writeups")}/>
         </div>
 
         {/* Mobile toggle button */}
