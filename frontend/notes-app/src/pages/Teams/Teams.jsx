@@ -22,7 +22,7 @@ const Teams = () => {
     <ParticlesBackground />
     <UserBar />
     <br /><br /><br /><br /><br /><br />
-    <h1 className="mb-4 text-6xl font-extrabold text-center text-transparent bg-gradient-to-r from-gray-300 to-white bg-clip-text">
+    <h1 className="relative z-10 mb-4 text-6xl font-extrabold text-center text-transparent bg-gradient-to-r from-gray-300 to-white bg-clip-text">
       TEAMS
     </h1> <br /><br />
     <div className="container p-10 mx-auto">
