@@ -5,6 +5,7 @@ import TeamCards from '../../components/Cards/TeamCards';
 import TabelTeams from '../../components/Tabels/TabelTeams';
 import { PiCardsThreeLight } from "react-icons/pi";
 import { VscTable } from "react-icons/vsc";
+import ParticlesBackground from '../../components/Background/ParticlesBackground';
 
 const Teams = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -18,6 +19,7 @@ const Teams = () => {
 
   return (
     <div className="bg-[#121212] min-h-screen pb-1 transition-colors duration-300"> 
+    <ParticlesBackground />
     <UserBar />
     <br /><br /><br /><br /><br /><br />
     <h1 className="mb-4 text-6xl font-extrabold text-center text-transparent bg-gradient-to-r from-gray-300 to-white bg-clip-text">
