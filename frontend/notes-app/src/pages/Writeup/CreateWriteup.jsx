@@ -121,7 +121,7 @@ const editorConfig = useMemo(
 
         {/* Description Editor - Now using Jodit */}
         <h2 className="mt-6 mb-3 ml-20 text-2xl font-bold">Writeup Content</h2>
-        <div className="w-[990px] ml-20 p-2 rounded-md">
+        <div className="w-[992px] ml-20 p-2 rounded-md">
           <JoditEditor
             ref={editor}
             value={description}
