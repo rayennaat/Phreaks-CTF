@@ -108,7 +108,7 @@ const editorConfig = useMemo(
 
       <div className="max-w-6xl mx-auto">
         <h1 className="mb-6 text-3xl font-bold text-center md:text-6xl">{challengeTitle}</h1>
-        <h3 className="text-center text-pink-400">{category}</h3>
+        <h3 className="text-center text-gray-400">{category}</h3>
 
         {/* Summary Input */}
         <h2 className="mt-6 mb-3 ml-20 text-2xl font-bold">Summarize Your Writeup</h2>
