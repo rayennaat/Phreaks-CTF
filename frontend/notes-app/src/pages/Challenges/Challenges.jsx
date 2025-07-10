@@ -1,24 +1,23 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import UserBar from "../../components/UserBar/UserBar";
 import TaskCard from "../../components/Cards/ScrambleButton";
 
 const ChallengesPage = () => {
   const canvasRef = useRef(null);
-  const [mousePosition, setMousePosition] = useState({ x: null, y: null });
-  const dotsRef = useRef([]);
+  const mouse = useRef({ x: null, y: null });
+  const targetMouse = useRef({ x: null, y: null });
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
-    
-    // Set canvas to full window size
+
+    // Set canvas size
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    
+
     // Create dots
     const dots = [];
     const dotCount = Math.floor((canvas.width * canvas.height) / 10000);
-    
     for (let i = 0; i < dotCount; i++) {
       dots.push({
         x: Math.random() * canvas.width,
@@ -26,121 +25,105 @@ const ChallengesPage = () => {
         size: Math.random() * 2 + 1,
         speedX: Math.random() * 0.5 - 0.25,
         speedY: Math.random() * 0.5 - 0.25,
-        originalX: null, // Store original position
-        originalY: null,
       });
     }
-    dotsRef.current = dots;
 
     // Animation loop
     let animationFrameId;
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      // Update and draw dots
-      dotsRef.current.forEach(dot => {
-        // Store original position if not set
-        if (dot.originalX === null) dot.originalX = dot.x;
-        if (dot.originalY === null) dot.originalY = dot.y;
-        
-        // Normal movement when mouse isn't nearby
-        if (!mousePosition.x || !mousePosition.y) {
-          dot.x += dot.speedX;
-          dot.y += dot.speedY;
-        } else {
-          // Calculate distance to mouse
-          const dx = mousePosition.x - dot.x;
-          const dy = mousePosition.y - dot.y;
+
+      // Smooth mouse movement
+      if (mouse.current.x == null) {
+        mouse.current.x = targetMouse.current.x;
+        mouse.current.y = targetMouse.current.y;
+      } else {
+        mouse.current.x += (targetMouse.current.x - mouse.current.x) * 0.1;
+        mouse.current.y += (targetMouse.current.y - mouse.current.y) * 0.1;
+      }
+
+      dots.forEach(dot => {
+
+        // Mouse attraction behavior
+        if (mouse.current.x !== null && mouse.current.y !== null) {
+          const dx = mouse.current.x - dot.x;
+          const dy = mouse.current.y - dot.y;
           const distance = Math.sqrt(dx * dx + dy * dy);
-          
-          // Only react when mouse is somewhat close
-          if (distance < 250) {
-            // Move away from mouse gently (slower reaction)
-            const forceDirectionX = dx / distance;
-            const forceDirectionY = dy / distance;
-            const force = (250 - distance) / 250 * 0.3; // Reduced force
-            
-            dot.x -= forceDirectionX * force * 0.5; // Slower reaction (0.5 multiplier)
-            dot.y -= forceDirectionY * force * 0.5;
-          } else {
-            // Return to original position slowly
-            dot.x += (dot.originalX - dot.x) * 0.02;
-            dot.y += (dot.originalY - dot.y) * 0.02;
+
+          if (distance < 200) {
+            const force = (200 - distance) / 200; // Attraction strength
+            const angle = Math.atan2(dy, dx);
+            const moveX = Math.cos(angle) * force * 0.5; // Adjust 0.5 for intensity
+            const moveY = Math.sin(angle) * force * 0.5;
+
+            dot.x += moveX;
+            dot.y += moveY;
           }
         }
-        
-        // Bounce off edges
+
+        dot.x += dot.speedX;
+        dot.y += dot.speedY;
+
         if (dot.x < 0 || dot.x > canvas.width) dot.speedX *= -1;
         if (dot.y < 0 || dot.y > canvas.height) dot.speedY *= -1;
-        
+
         // Draw dot
         ctx.fillStyle = 'rgba(100, 100, 255, 0.5)';
         ctx.beginPath();
         ctx.arc(dot.x, dot.y, dot.size, 0, Math.PI * 2);
         ctx.fill();
-        
-        // Connect dots that are close to each other
-        dotsRef.current.forEach(otherDot => {
-          const distance = Math.sqrt(
-            Math.pow(dot.x - otherDot.x, 2) + 
-            Math.pow(dot.y - otherDot.y, 2)
-          );
-          
-          if (distance < 150) {
-            ctx.strokeStyle = `rgba(100, 100, 255, ${1 - distance/150})`;
+
+        // Connect nearby dots
+        dots.forEach(other => {
+          const dist = Math.hypot(dot.x - other.x, dot.y - other.y);
+          if (dist < 150) {
+            ctx.strokeStyle = `rgba(100, 100, 255, ${1 - dist / 150})`;
             ctx.lineWidth = 0.5;
             ctx.beginPath();
             ctx.moveTo(dot.x, dot.y);
-            ctx.lineTo(otherDot.x, otherDot.y);
+            ctx.lineTo(other.x, other.y);
             ctx.stroke();
           }
         });
-        
-        // Connect dots to mouse if close
-        if (mousePosition.x && mousePosition.y) {
-          const mouseDistance = Math.sqrt(
-            Math.pow(dot.x - mousePosition.x, 2) + 
-            Math.pow(dot.y - mousePosition.y, 2)
-          );
-          
-          if (mouseDistance < 200) {
-            ctx.strokeStyle = `rgba(255, 255, 255, ${1 - mouseDistance/200})`;
+
+        // Connect to mouse
+        if (mouse.current.x != null && mouse.current.y != null) {
+          const distToMouse = Math.hypot(dot.x - mouse.current.x, dot.y - mouse.current.y);
+          if (distToMouse < 200) {
+            ctx.strokeStyle = `rgba(255, 255, 255, ${1 - distToMouse / 200})`;
             ctx.lineWidth = 0.8;
             ctx.beginPath();
             ctx.moveTo(dot.x, dot.y);
-            ctx.lineTo(mousePosition.x, mousePosition.y);
+            ctx.lineTo(mouse.current.x, mouse.current.y);
             ctx.stroke();
           }
         }
       });
-      
+
       animationFrameId = requestAnimationFrame(animate);
     };
-    
+
     animate();
-    
-    // Handle mouse movement
+
     const handleMouseMove = (e) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
+      targetMouse.current.x = e.clientX;
+      targetMouse.current.y = e.clientY;
     };
-    
-    window.addEventListener('mousemove', handleMouseMove);
-    
-    // Handle resize
+
     const handleResize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     };
-    
+
+    window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('resize', handleResize);
-    
-    // Cleanup
+
     return () => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('resize', handleResize);
     };
-  }, [mousePosition]);
+  }, []);
 
   return (
     <div className="bg-[#121212] min-h-screen pb-1 relative overflow-hidden">
