@@ -5,7 +5,7 @@ import ParticlesBackground from "../../components/Background/ParticlesBackground
 
 const ChallengesPage = () => {
   return (
-    <div className="relative bg-[#121212] min-h-screen pb-1 overflow-hidden">
+    <div className="relative bg-[#f13030] min-h-screen pb-1 overflow-hidden">
       <ParticlesBackground />
       <UserBar />
       <div className="relative z-10 max-w-6xl px-4 pt-32 mx-auto sm:px-6 lg:px-8">
