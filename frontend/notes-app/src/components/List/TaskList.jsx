@@ -137,7 +137,7 @@ const TaskList = ({ teamId }) => {
                   <div className="flex justify-start ml-5">
                     <button
                       onClick={() =>
-                        navigate(
+                        window.open(
                           `/create-writeups?challenge=${encodeURIComponent(task.title)}&category=${encodeURIComponent(task.category)}`
                         )
                       }
@@ -174,7 +174,7 @@ const TaskList = ({ teamId }) => {
               <div className="flex justify-end mt-3">
                 <button
                   onClick={() =>
-                    navigate(
+                    window.open(
                       `/create-writeups?challenge=${encodeURIComponent(task.title)}&category=${encodeURIComponent(task.category)}`
                     )
                   }
