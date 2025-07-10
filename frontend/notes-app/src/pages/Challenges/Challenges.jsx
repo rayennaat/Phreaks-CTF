@@ -38,8 +38,8 @@ const ChallengesPage = () => {
         mouse.current.x = targetMouse.current.x;
         mouse.current.y = targetMouse.current.y;
       } else {
-        mouse.current.x += (targetMouse.current.x - mouse.current.x) * 0.05;
-        mouse.current.y += (targetMouse.current.y - mouse.current.y) * 0.05;
+        mouse.current.x += (targetMouse.current.x - mouse.current.x) * 0.1;
+        mouse.current.y += (targetMouse.current.y - mouse.current.y) * 0.1;
       }
 
       dots.forEach(dot => {
