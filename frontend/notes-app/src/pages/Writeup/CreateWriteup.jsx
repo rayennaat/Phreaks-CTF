@@ -21,7 +21,7 @@ const editorConfig = useMemo(
       imagesExtensions: ['jpg', 'png', 'jpeg', 'gif', 'webp'],
       maxFileSize: 10 * 1024 * 1024 // 10MB per image
     },
-    height: 800,
+    height: 600,
     width: '100%',
     // Completely disable all external resource loading
     disablePlugins: [
