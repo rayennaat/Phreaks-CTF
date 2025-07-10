@@ -16,15 +16,15 @@ const ChallengesPage = () => {
     
     // Create dots
     const dots = [];
-    const dotCount = Math.floor((canvas.width * canvas.height) / 10000); // Adjust density
+    const dotCount = Math.floor((canvas.width * canvas.height) / 15000); // Reduced density
     
     for (let i = 0; i < dotCount; i++) {
       dots.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        size: Math.random() * 2 + 1,
-        speedX: Math.random() * 0.5 - 0.25,
-        speedY: Math.random() * 0.5 - 0.25,
+        size: Math.random() * 1 + 0.5, // Smaller dots
+        speedX: Math.random() * 0.2 - 0.1, // Slower movement
+        speedY: Math.random() * 0.2 - 0.1, // Slower movement
       });
     }
 
@@ -35,7 +35,7 @@ const ChallengesPage = () => {
       
       // Update and draw dots
       dots.forEach(dot => {
-        // Move dots
+        // Move dots (slower movement)
         dot.x += dot.speedX;
         dot.y += dot.speedY;
         
@@ -43,8 +43,8 @@ const ChallengesPage = () => {
         if (dot.x < 0 || dot.x > canvas.width) dot.speedX *= -1;
         if (dot.y < 0 || dot.y > canvas.height) dot.speedY *= -1;
         
-        // Draw dot
-        ctx.fillStyle = 'rgba(100, 100, 255, 0.5)';
+        // Draw dot (more subtle)
+        ctx.fillStyle = 'rgba(100, 100, 255, 0.3)'; // More transparent
         ctx.beginPath();
         ctx.arc(dot.x, dot.y, dot.size, 0, Math.PI * 2);
         ctx.fill();
@@ -56,9 +56,9 @@ const ChallengesPage = () => {
             Math.pow(dot.y - otherDot.y, 2)
           );
           
-          if (distance < 150) { // Connection distance threshold
-            ctx.strokeStyle = `rgba(100, 100, 255, ${1 - distance/150})`;
-            ctx.lineWidth = 0.5;
+          if (distance < 100) { // Reduced connection distance
+            ctx.strokeStyle = `rgba(100, 100, 255, ${0.3 - distance/300})`; // More subtle
+            ctx.lineWidth = 0.3; // Thinner lines
             ctx.beginPath();
             ctx.moveTo(dot.x, dot.y);
             ctx.lineTo(otherDot.x, otherDot.y);
@@ -73,9 +73,9 @@ const ChallengesPage = () => {
             Math.pow(dot.y - mousePosition.y, 2)
           );
           
-          if (mouseDistance < 200) { // Mouse interaction distance
-            ctx.strokeStyle = `rgba(255, 255, 255, ${1 - mouseDistance/200})`;
-            ctx.lineWidth = 0.8;
+          if (mouseDistance < 150) { // Reduced mouse interaction distance
+            ctx.strokeStyle = `rgba(255, 255, 255, ${0.4 - mouseDistance/375})`; // More subtle
+            ctx.lineWidth = 0.4; // Thinner lines
             ctx.beginPath();
             ctx.moveTo(dot.x, dot.y);
             ctx.lineTo(mousePosition.x, mousePosition.y);
@@ -114,10 +114,11 @@ const ChallengesPage = () => {
 
   return (
     <div className="bg-[#121212] min-h-screen pb-1 relative overflow-hidden">
-      {/* Canvas background */}
+      {/* Canvas background - added blur for smoother effect */}
       <canvas 
         ref={canvasRef} 
-        className="fixed top-0 left-0 w-full h-full pointer-events-none z-0"
+        className="fixed top-0 left-0 w-full h-full pointer-events-none z-0 opacity-70"
+        style={{ filter: 'blur(1px)' }}
       />
       
       {/* Content */}
