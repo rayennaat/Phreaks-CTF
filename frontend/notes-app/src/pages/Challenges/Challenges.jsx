@@ -14,19 +14,17 @@ const ChallengesPage = () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     
-    // Create dots with better visibility
+    // Create dots
     const dots = [];
-    const dotCount = Math.floor((canvas.width * canvas.height) / 12000); // Slightly more dots
+    const dotCount = Math.floor((canvas.width * canvas.height) / 10000); // Adjust density
     
     for (let i = 0; i < dotCount; i++) {
       dots.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        size: Math.random() * 1.2 + 0.8, // Slightly larger dots
-        speedX: Math.random() * 0.2 - 0.1, // Maintains smooth speed
-        speedY: Math.random() * 0.2 - 0.1,
-        originalX: Math.random() * canvas.width,
-        originalY: Math.random() * canvas.height
+        size: Math.random() * 2 + 1,
+        speedX: Math.random() * 0.5 - 0.25,
+        speedY: Math.random() * 0.5 - 0.25,
       });
     }
 
@@ -37,29 +35,30 @@ const ChallengesPage = () => {
       
       // Update and draw dots
       dots.forEach(dot => {
-        // Gentle movement with tendency to return to original position
-        dot.x += (dot.originalX - dot.x) * 0.005 + dot.speedX;
-        dot.y += (dot.originalY - dot.y) * 0.005 + dot.speedY;
+        // Move dots
+        dot.x += dot.speedX;
+        dot.y += dot.speedY;
         
-        // Draw dot with better visibility
-        ctx.fillStyle = 'rgba(120, 120, 255, 0.5)'; // More visible color
+        // Bounce off edges
+        if (dot.x < 0 || dot.x > canvas.width) dot.speedX *= -1;
+        if (dot.y < 0 || dot.y > canvas.height) dot.speedY *= -1;
+        
+        // Draw dot
+        ctx.fillStyle = 'rgba(100, 100, 255, 0.5)';
         ctx.beginPath();
         ctx.arc(dot.x, dot.y, dot.size, 0, Math.PI * 2);
         ctx.fill();
         
         // Connect dots that are close to each other
         dots.forEach(otherDot => {
-          if (dot === otherDot) return;
-          
           const distance = Math.sqrt(
             Math.pow(dot.x - otherDot.x, 2) + 
             Math.pow(dot.y - otherDot.y, 2)
           );
           
-          if (distance < 120) { // Slightly increased connection distance
-            const opacity = 0.6 - distance/200; // More visible connections
-            ctx.strokeStyle = `rgba(150, 150, 255, ${opacity})`;
-            ctx.lineWidth = 0.5; // Slightly thicker lines
+          if (distance < 150) { // Connection distance threshold
+            ctx.strokeStyle = `rgba(100, 100, 255, ${1 - distance/150})`;
+            ctx.lineWidth = 0.5;
             ctx.beginPath();
             ctx.moveTo(dot.x, dot.y);
             ctx.lineTo(otherDot.x, otherDot.y);
@@ -67,25 +66,20 @@ const ChallengesPage = () => {
           }
         });
         
-        // Connect dots to mouse if close (more visible interaction)
+        // Connect dots to mouse if close
         if (mousePosition.x && mousePosition.y) {
           const mouseDistance = Math.sqrt(
             Math.pow(dot.x - mousePosition.x, 2) + 
             Math.pow(dot.y - mousePosition.y, 2)
           );
           
-          if (mouseDistance < 180) {
-            const opacity = 0.7 - mouseDistance/250;
-            ctx.strokeStyle = `rgba(200, 200, 255, ${opacity})`;
-            ctx.lineWidth = 0.6;
+          if (mouseDistance < 200) { // Mouse interaction distance
+            ctx.strokeStyle = `rgba(255, 255, 255, ${1 - mouseDistance/200})`;
+            ctx.lineWidth = 0.8;
             ctx.beginPath();
             ctx.moveTo(dot.x, dot.y);
             ctx.lineTo(mousePosition.x, mousePosition.y);
             ctx.stroke();
-            
-            // Gentle push effect from mouse
-            dot.x += (mousePosition.x - dot.x) * -0.0005;
-            dot.y += (mousePosition.y - dot.y) * -0.0005;
           }
         }
       });
@@ -95,7 +89,7 @@ const ChallengesPage = () => {
     
     animate();
     
-    // Mouse movement handler
+    // Handle mouse movement
     const handleMouseMove = (e) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
     };
@@ -120,10 +114,10 @@ const ChallengesPage = () => {
 
   return (
     <div className="bg-[#121212] min-h-screen pb-1 relative overflow-hidden">
-      {/* Canvas background with better visibility */}
+      {/* Canvas background */}
       <canvas 
         ref={canvasRef} 
-        className="fixed top-0 left-0 w-full h-full pointer-events-none z-0 opacity-80"
+        className="fixed top-0 left-0 w-full h-full pointer-events-none z-0"
       />
       
       {/* Content */}
