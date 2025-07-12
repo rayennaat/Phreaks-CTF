@@ -26,14 +26,14 @@ export default function AdminNotifications() {
   const [active, setActive] = useState("notification");
 
   return (
-    <div className="flex min-h-screen text-white bg-gradient-to-br from-gray-900 to-black">
+    <div className="flex min-h-screen text-white bg-gray-900">
       <Sidebar active={active} setActive={setActive} />
       <main className="relative flex flex-col items-center flex-1 gap-10 p-8 ml-64 overflow-hidden">
         <h1 className="text-4xl font-extrabold text-center md:text-6xl text-cyan-500 drop-shadow-md">
           NOTIFICATIONS
         </h1>
         
-        <div className="w-full max-w-4xl overflow-hidden rounded-lg shadow-2xl">
+        <div className="w-full max-w-4xl mt-20 overflow-hidden rounded-lg shadow-2xl">
           <table className="w-full border-collapse">
             <thead className="bg-gray-800">
               <tr>
