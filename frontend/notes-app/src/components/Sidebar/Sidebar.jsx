@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { FaChartBar, FaTasks, FaUsers, FaUsersCog, FaListOl, FaFileUpload, FaCogs, FaArrowLeft, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaBell, FaChartBar, FaTasks, FaUsers, FaUsersCog, FaListOl, FaFileUpload, FaCogs, FaArrowLeft, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { FaPenToSquare } from "react-icons/fa6";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -18,7 +18,7 @@ export default function Sidebar({ active, setActive }) {
     { name: "Submissions", icon: <FaFileUpload size={20} />, path: "/admin/submissions" },
     { name: "Writeups", icon: <FaPenToSquare size={20} />, path: "/admin/writeups" },
     { name: "Config", icon: <FaCogs size={20} />, path: "/admin/config" },
-    { name: "notification", icon: <FaTasks size={20} />, path: "/admin/notifications" },
+    { name: "notification", icon: <FaBell size={20} />, path: "/admin/notifications" },
   ];
 
   useEffect(() => {
