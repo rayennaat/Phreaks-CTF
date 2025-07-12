@@ -7,6 +7,7 @@ const Team = require("./models/team.model");
 const Challenge = require("./models/challenge.model"); // Adjust path if needed
 const Submission = require("./models/submission.model");
 const Writeup = require("./models/writeup.model");
+const Notification = require("./models/notification.model");
 const express = require("express");
 const cors = require("cors");
 const app = express();
@@ -23,15 +24,35 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 const PORT = 5000;
 
+const http = require('http');
+const { Server } = require('socket.io');
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: '*', // use your frontend URL in production
+  }
+});
+
+global.io = io;
+
+io.on('connection', (socket) => {
+  console.log('A user connected:', socket.id);
+});
+
+
 app.use(
-    cors({
-        origin: "https://phreaks-ctf-frontend.onrender.com",
-        methods: ["GET", "POST", "PUT", "DELETE"], // Allow these methods
-        allowedHeaders: ["Content-Type", "Authorization"],
-        credentials: true,
-        maxAge: 86400
-    })
+  cors({
+    origin: [
+      "https://phreaks-ctf-frontend.onrender.com",
+      "http://localhost:5000"
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+    maxAge: 86400
+  })
 );
+
 
 // Serve static files from the uploads directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -1321,6 +1342,16 @@ app.get('/api/teams/:teamId/members', authenticateToken, async (req, res) => {
   }
 });
 
+
+app.post('/send', async (req, res) => {
+  const { title, message } = req.body;
+  const notification = new Notification({ title, message });
+  await notification.save();
+
+  global.io.emit('new-notification', notification); // Real-time emit
+
+  res.json({ success: true, notification });
+});
 
 app.listen(PORT, () => {
     console.log(`Backend running on http://localhost:${PORT}`);
