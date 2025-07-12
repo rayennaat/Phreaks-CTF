@@ -123,7 +123,7 @@ export default function AdminNotifications() {
         )}
 
         {/* Notifications Table */}
-        <div className="w-full max-w-4xl mt-10 overflow-hidden rounded-lg shadow-2xl">
+        <div className="w-full max-w-4xl mt-20 overflow-hidden rounded-lg shadow-2xl">
           <div className="flex items-center justify-between p-4 bg-gray-800">
             <h2 className="text-xl font-semibold text-gray-300">Recent Notifications</h2>
             <button 
