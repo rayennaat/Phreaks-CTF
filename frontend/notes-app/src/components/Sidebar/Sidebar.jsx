@@ -18,6 +18,7 @@ export default function Sidebar({ active, setActive }) {
     { name: "Submissions", icon: <FaFileUpload size={20} />, path: "/admin/submissions" },
     { name: "Writeups", icon: <FaPenToSquare size={20} />, path: "/admin/writeups" },
     { name: "Config", icon: <FaCogs size={20} />, path: "/admin/config" },
+    { name: "notification", icon: <FaTasks size={20} />, path: "/admin/notifications" },
   ];
 
   useEffect(() => {

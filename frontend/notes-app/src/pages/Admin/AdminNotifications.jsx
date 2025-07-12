@@ -23,7 +23,7 @@ const dummyNotifications = [
 ];
 
 export default function AdminNotifications() {
-  const [active, setActive] = useState("Config");
+  const [active, setActive] = useState("notification");
 
   return (
     <div className="flex min-h-screen text-white bg-gradient-to-br from-gray-900 to-black">
