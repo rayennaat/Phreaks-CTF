@@ -1353,6 +1353,15 @@ app.post('/send', async (req, res) => {
   res.json({ success: true, notification });
 });
 
+app.get('/api/notifications', async (req, res) => {
+  try {
+    const notifications = await Notification.find().sort({ createdAt: -1 });
+    res.json(notifications);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch notifications' });
+  }
+});
+
 app.listen(PORT, () => {
     console.log(`Backend running on http://localhost:${PORT}`);
 });

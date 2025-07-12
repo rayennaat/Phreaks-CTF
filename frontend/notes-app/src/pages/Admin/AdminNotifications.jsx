@@ -1,49 +1,76 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "../../components/Sidebar/Sidebar";
-
-const dummyNotifications = [
-  {
-    id: 1,
-    title: 'Challenge Solved!',
-    message: 'Your team just solved the "Web 101" challenge.',
-    time: '2 mins ago',
-  },
-  {
-    id: 2,
-    title: 'New Challenge Added',
-    message: 'A new Reverse Engineering challenge has been added.',
-    time: '1 hour ago',
-  },
-  {
-    id: 3,
-    title: 'Team Invitation',
-    message: 'You have been invited to join Team Xploiters.',
-    time: 'Yesterday',
-  },
-];
+import axios from "axios";
 
 export default function AdminNotifications() {
   const [active, setActive] = useState("notification");
-  const [notifications, setNotifications] = useState(dummyNotifications);
+  const [notifications, setNotifications] = useState([]);
   const [showPostPanel, setShowPostPanel] = useState(false);
   const [newNotification, setNewNotification] = useState({
     title: '',
     message: '',
-    time: 'Just now'
   });
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const handlePostNotification = () => {
+  // Fetch notifications from API
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const response = await axios.get('/api/notifications');
+        setNotifications(response.data);
+        setIsLoading(false);
+      } catch (err) {
+        setError("Failed to fetch notifications");
+        setIsLoading(false);
+        console.error(err);
+      }
+    };
+
+    fetchNotifications();
+  }, []);
+
+  const handlePostNotification = async () => {
     if (newNotification.title && newNotification.message) {
-      const notification = {
-        id: notifications.length + 1,
-        title: newNotification.title,
-        message: newNotification.message,
-        time: newNotification.time
-      };
-      setNotifications([notification, ...notifications]);
-      setNewNotification({ title: '', message: '', time: 'Just now' });
-      setShowPostPanel(false);
+      try {
+        const response = await axios.post('/api/notifications/send', {
+          title: newNotification.title,
+          message: newNotification.message
+        });
+        
+        // Add the new notification to the local state
+        setNotifications([response.data.notification, ...notifications]);
+        setNewNotification({ title: '', message: '' });
+        setShowPostPanel(false);
+      } catch (err) {
+        console.error("Failed to post notification:", err);
+        setError("Failed to post notification");
+      }
     }
+  };
+
+  // Format time to relative time (e.g., "2 mins ago")
+  const formatTime = (dateString) => {
+    const now = new Date();
+    const date = new Date(dateString);
+    const seconds = Math.floor((now - date) / 1000);
+    
+    let interval = Math.floor(seconds / 31536000);
+    if (interval >= 1) return `${interval} year${interval === 1 ? '' : 's'} ago`;
+    
+    interval = Math.floor(seconds / 2592000);
+    if (interval >= 1) return `${interval} month${interval === 1 ? '' : 's'} ago`;
+    
+    interval = Math.floor(seconds / 86400);
+    if (interval >= 1) return `${interval} day${interval === 1 ? '' : 's'} ago`;
+    
+    interval = Math.floor(seconds / 3600);
+    if (interval >= 1) return `${interval} hour${interval === 1 ? '' : 's'} ago`;
+    
+    interval = Math.floor(seconds / 60);
+    if (interval >= 1) return `${interval} minute${interval === 1 ? '' : 's'} ago`;
+    
+    return "Just now";
   };
 
   return (
@@ -102,6 +129,8 @@ export default function AdminNotifications() {
                   />
                 </div>
                 
+                {error && <div className="p-2 text-sm text-red-500">{error}</div>}
+                
                 <div className="flex justify-end space-x-4">
                   <button
                     onClick={() => setShowPostPanel(false)}
@@ -137,35 +166,45 @@ export default function AdminNotifications() {
             </button>
           </div>
           
-          <table className="w-full border-collapse">
-            <thead className="bg-gray-800">
-              <tr>
-                <th className="px-6 py-4 text-sm font-medium tracking-wider text-left uppercase text-cyan-400">Time</th>
-                <th className="px-6 py-4 text-sm font-medium tracking-wider text-left uppercase text-cyan-400">Title</th>
-                <th className="px-6 py-4 text-sm font-medium tracking-wider text-left uppercase text-cyan-400">Message</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-700 bg-gray-900/50">
-              {notifications.map((notification) => (
-                <tr 
-                  key={notification.id} 
-                  className="transition-colors duration-200 hover:bg-gray-800/70"
-                >
-                  <td className="px-6 py-4 text-sm text-gray-300 whitespace-nowrap">
-                    {notification.time}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-white">{notification.title}</div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm text-gray-400">{notification.message}</div>
-                  </td>
+          {isLoading ? (
+            <div className="w-full py-12 text-center text-gray-500">
+              Loading notifications...
+            </div>
+          ) : error ? (
+            <div className="w-full py-12 text-center text-red-500">
+              {error}
+            </div>
+          ) : (
+            <table className="w-full border-collapse">
+              <thead className="bg-gray-800">
+                <tr>
+                  <th className="px-6 py-4 text-sm font-medium tracking-wider text-left uppercase text-cyan-400">Time</th>
+                  <th className="px-6 py-4 text-sm font-medium tracking-wider text-left uppercase text-cyan-400">Title</th>
+                  <th className="px-6 py-4 text-sm font-medium tracking-wider text-left uppercase text-cyan-400">Message</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-gray-700 bg-gray-900/50">
+                {notifications.map((notification) => (
+                  <tr 
+                    key={notification._id} 
+                    className="transition-colors duration-200 hover:bg-gray-800/70"
+                  >
+                    <td className="px-6 py-4 text-sm text-gray-300 whitespace-nowrap">
+                      {formatTime(notification.createdAt || notification.time)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-white">{notification.title}</div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-sm text-gray-400">{notification.message}</div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
           
-          {notifications.length === 0 && (
+          {!isLoading && notifications.length === 0 && (
             <div className="w-full py-12 text-center text-gray-500">
               No notifications available
             </div>
