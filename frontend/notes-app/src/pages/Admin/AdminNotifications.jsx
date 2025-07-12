@@ -17,7 +17,7 @@ export default function AdminNotifications() {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const response = await axios.get('/api/notifications');
+        const response = await axios.get('/https://phreaks-ctf.onrender.comapi/notifications');
         setNotifications(response.data);
         setIsLoading(false);
       } catch (err) {
@@ -33,7 +33,7 @@ export default function AdminNotifications() {
   const handlePostNotification = async () => {
     if (newNotification.title && newNotification.message) {
       try {
-        const response = await axios.post('/api/notifications/send', {
+        const response = await axios.post('https://phreaks-ctf.onrender.com/send', {
           title: newNotification.title,
           message: newNotification.message
         });
