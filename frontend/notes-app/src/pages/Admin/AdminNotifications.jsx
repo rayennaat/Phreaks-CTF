@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import Sidebar from "../../components/Sidebar/Sidebar";
-import axios from "axios";
 
 export default function AdminNotifications() {
   const [active, setActive] = useState("notification");
@@ -17,8 +16,17 @@ export default function AdminNotifications() {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const response = await axios.get('/https://phreaks-ctf.onrender.comapi/notifications');
-        setNotifications(response.data);
+        const res = await fetch("https://phreaks-ctf.onrender.com/api/notifications");
+        const data = await res.json();
+        
+        // Ensure data is an array before setting it
+        if (Array.isArray(data)) {
+          setNotifications(data);
+        } else {
+          // If the API returns an object with notifications array
+          setNotifications(data.notifications || []);
+        }
+        
         setIsLoading(false);
       } catch (err) {
         setError("Failed to fetch notifications");
@@ -33,24 +41,38 @@ export default function AdminNotifications() {
   const handlePostNotification = async () => {
     if (newNotification.title && newNotification.message) {
       try {
-        const response = await axios.post('https://phreaks-ctf.onrender.com/send', {
-          title: newNotification.title,
-          message: newNotification.message
+        const res = await fetch("https://phreaks-ctf.onrender.com/api/notifications/send", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title: newNotification.title,
+            message: newNotification.message
+          }),
         });
         
-        // Add the new notification to the local state
-        setNotifications([response.data.notification, ...notifications]);
-        setNewNotification({ title: '', message: '' });
-        setShowPostPanel(false);
+        const data = await res.json();
+        
+        if (data.success && data.notification) {
+          // Add the new notification to the local state
+          setNotifications([data.notification, ...notifications]);
+          setNewNotification({ title: '', message: '' });
+          setShowPostPanel(false);
+        } else {
+          throw new Error(data.error || "Failed to post notification");
+        }
       } catch (err) {
         console.error("Failed to post notification:", err);
-        setError("Failed to post notification");
+        setError(err.message);
       }
     }
   };
 
   // Format time to relative time (e.g., "2 mins ago")
   const formatTime = (dateString) => {
+    if (!dateString) return "Just now";
+    
     const now = new Date();
     const date = new Date(dateString);
     const seconds = Math.floor((now - date) / 1000);
@@ -186,7 +208,7 @@ export default function AdminNotifications() {
               <tbody className="divide-y divide-gray-700 bg-gray-900/50">
                 {notifications.map((notification) => (
                   <tr 
-                    key={notification._id} 
+                    key={notification._id || notification.id} 
                     className="transition-colors duration-200 hover:bg-gray-800/70"
                   >
                     <td className="px-6 py-4 text-sm text-gray-300 whitespace-nowrap">
@@ -204,7 +226,7 @@ export default function AdminNotifications() {
             </table>
           )}
           
-          {!isLoading && notifications.length === 0 && (
+          {!isLoading && !error && notifications.length === 0 && (
             <div className="w-full py-12 text-center text-gray-500">
               No notifications available
             </div>
