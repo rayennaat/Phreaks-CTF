@@ -10,7 +10,6 @@ const Writeup = require("./models/writeup.model");
 const express = require("express");
 const cors = require("cors");
 const app = express();
-const { v4: uuidv4 } = require('uuid');
 const multer = require('multer');
 const crypto = require("crypto"); 
 const bcrypt = require('bcryptjs');

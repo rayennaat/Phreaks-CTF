@@ -23,6 +23,7 @@ import CreateWriteup from './pages/Writeup/CreateWriteup';
 import WriteupDetails from './pages/Writeups/WriteupDetails';
 import AdminWriteups from './pages/Admin/AdminWriteups';
 import Notifications from './pages/Notifications/Notifications';
+import AdminNotifications from './pages/Admin/AdminNotifications';
 
 
 
@@ -48,6 +49,7 @@ const routes= (
       <Route path='/admin/submissions' exact element={<AdminSubmissions/>} />
       <Route path='/admin/scoreboard' exact element={<AdminScoreboard/>} />
       <Route path='/admin/config' exact element={<AdminConfig/>} />
+      <Route path='/admin/notifications' exact element={<AdminNotifications/>} />
       <Route path='/admin/writeups' exact element={<AdminWriteups/>} />
       <Route path='/writeups' exact element={<Writeups/>} />
       <Route path='/create-writeups' exact element={<CreateWriteup/>} />

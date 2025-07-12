@@ -22,7 +22,7 @@ const dummyNotifications = [
   },
 ];
 
-export default function AdminConfig() {
+export default function AdminNotifications() {
   const [active, setActive] = useState("Config");
 
   return (
