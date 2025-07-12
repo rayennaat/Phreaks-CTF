@@ -41,7 +41,7 @@ export default function AdminNotifications() {
   const handlePostNotification = async () => {
     if (newNotification.title && newNotification.message) {
       try {
-        const res = await fetch("https://phreaks-ctf.onrender.com/api/notifications/send", {
+        const res = await fetch("https://phreaks-ctf.onrender.com/send", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
