@@ -7,6 +7,7 @@ const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [connectionStatus, setConnectionStatus] = useState('connecting');
 
   // Format time to relative time
   const formatTime = (dateString) => {
@@ -34,46 +35,69 @@ const Notifications = () => {
     return "Just now";
   };
 
-  // Fetch initial notifications
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const res = await fetch("https://phreaks-ctf.onrender.com/api/notifications");
-        const data = await res.json();
-        setNotifications(Array.isArray(data) ? data : (data.notifications || []));
-        setIsLoading(false);
-      } catch (err) {
-        setError("Failed to load notifications");
-        setIsLoading(false);
-      }
-    };
+  // Fetch notifications from API
+  const fetchNotifications = async () => {
+    try {
+      const res = await fetch("https://phreaks-ctf.onrender.com/api/notifications");
+      const data = await res.json();
+      setNotifications(Array.isArray(data) ? data : (data.notifications || []));
+      setIsLoading(false);
+    } catch (err) {
+      setError("Failed to load notifications");
+      setIsLoading(false);
+    }
+  };
 
+  // Initial fetch
+  useEffect(() => {
     fetchNotifications();
   }, []);
 
-  // Set up Socket.io connection
+  // Set up Socket.io connection with fallback
   useEffect(() => {
-    const socket = io('https://phreaks-ctf.onrender.com', {
-      reconnection: true,
-      reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
-      transports: ['websocket'] // Force WebSocket transport
-    });
+    let socket;
+    let pollInterval;
 
-    socket.on('connect', () => {
-      console.log('Socket connected');
-    });
+    const setupRealtime = () => {
+      // Try WebSocket first
+      socket = io('https://phreaks-ctf.onrender.com', {
+        reconnection: true,
+        reconnectionAttempts: 3,
+        reconnectionDelay: 1000,
+        transports: ['websocket', 'polling'] // Try both transports
+      });
 
-    socket.on('new-notification', (notification) => {
-      setNotifications(prev => [notification, ...prev]);
-    });
+      socket.on('connect', () => {
+        setConnectionStatus('connected');
+        console.log('WebSocket connected');
+        if (pollInterval) clearInterval(pollInterval);
+      });
 
-    socket.on('connect_error', (err) => {
-      console.error('Socket connection error:', err);
-    });
+      socket.on('new-notification', (notification) => {
+        setNotifications(prev => [notification, ...prev]);
+      });
+
+      socket.on('connect_error', (err) => {
+        console.error('WebSocket connection error:', err);
+        setConnectionStatus('disconnected');
+        
+        // Fallback to polling if WebSocket fails
+        if (!pollInterval) {
+          console.log('Falling back to polling');
+          pollInterval = setInterval(fetchNotifications, 5000);
+        }
+      });
+
+      socket.on('disconnect', () => {
+        setConnectionStatus('disconnected');
+      });
+    };
+
+    setupRealtime();
 
     return () => {
-      socket.disconnect();
+      if (socket) socket.disconnect();
+      if (pollInterval) clearInterval(pollInterval);
     };
   }, []);
 
@@ -84,6 +108,16 @@ const Notifications = () => {
         <h1 className="mb-8 text-5xl font-extrabold text-center text-transparent bg-gradient-to-r from-gray-300 to-white bg-clip-text">
           Notifications
         </h1>
+        
+        {/* Connection status indicator */}
+        <div className={`text-center mb-4 text-sm ${
+          connectionStatus === 'connected' ? 'text-green-400' : 'text-yellow-400'
+        }`}>
+          {connectionStatus === 'connected' 
+            ? 'Real-time updates connected' 
+            : 'Using fallback updates (refreshing every 5 seconds)'}
+        </div>
+        
         <br /><br />   
         
         {isLoading ? (
