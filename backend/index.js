@@ -29,7 +29,7 @@ const { Server } = require('socket.io');
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: 'https://phreaks-ctf-frontend.onrender.com', // use your frontend URL in production
+    origin: "https://phreaks-ctf-frontend.onrender.com", // use your frontend URL in production
     methods: ["GET", "POST"]
   }
 });
