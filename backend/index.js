@@ -29,7 +29,8 @@ const { Server } = require('socket.io');
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: '*', // use your frontend URL in production
+    origin: 'https://phreaks-ctf-frontend.onrender.com', // use your frontend URL in production
+    methods: ["GET", "POST"]
   }
 });
 
@@ -1348,8 +1349,7 @@ app.post('/send', async (req, res) => {
   const notification = new Notification({ title, message });
   await notification.save();
 
-  global.io.emit('new-notification', notification); // Real-time emit
-
+  io.emit('new-notification', notification); // Emit to all connected clients
   res.json({ success: true, notification });
 });
 
