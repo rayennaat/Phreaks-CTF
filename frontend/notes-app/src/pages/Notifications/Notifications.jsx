@@ -1,20 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import UserBar from '../../components/UserBar/UserBar';
 import { FaInfoCircle } from 'react-icons/fa';
+import io from 'socket.io-client'; // Add this import
 
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [socket, setSocket] = useState(null); // Add socket state
 
-  // Fetch notifications from API
+  // Initialize socket connection
+  useEffect(() => {
+    const newSocket = io('https://phreaks-ctf.onrender.com'); // Your backend URL
+    setSocket(newSocket);
+
+    return () => {
+      newSocket.disconnect(); // Clean up on unmount
+    };
+  }, []);
+
+  // Fetch notifications from API and setup socket listeners
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
         const res = await fetch("https://phreaks-ctf.onrender.com/api/notifications");
         const data = await res.json();
         
-        // Handle both array response and object with notifications property
         const receivedNotifications = Array.isArray(data) ? data : (data.notifications || []);
         setNotifications(receivedNotifications);
         setIsLoading(false);
@@ -27,25 +38,27 @@ const Notifications = () => {
 
     fetchNotifications();
 
-    // Set up real-time updates if using Socket.io
-    const setupRealTime = () => {
-      if (global.io) {
-        global.io.on('new-notification', (notification) => {
-          setNotifications(prev => [notification, ...prev]);
-        });
-      }
-    };
+    // Set up real-time updates with socket
+    if (socket) {
+      socket.on('new-notification', (notification) => {
+        setNotifications(prev => [notification, ...prev]);
+      });
 
-    setupRealTime();
+      // Error handling
+      socket.on('connect_error', (err) => {
+        console.error('Socket connection error:', err);
+      });
+    }
 
     return () => {
-      if (global.io) {
-        global.io.off('new-notification');
+      if (socket) {
+        socket.off('new-notification');
+        socket.off('connect_error');
       }
     };
-  }, []);
+  }, [socket]); // Add socket to dependency array
 
-  // Format time to relative time (e.g., "2 mins ago")
+  // Format time to relative time
   const formatTime = (dateString) => {
     if (!dateString) return "Just now";
     
