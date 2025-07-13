@@ -115,7 +115,7 @@ const Notifications = () => {
         }`}>
           {connectionStatus === 'connected' 
             ? 'Real-time updates connected' 
-            : 'Using fallback updates (refreshing every 5 seconds)'}
+            : ''}
         </div>
         
         <br /><br />   
