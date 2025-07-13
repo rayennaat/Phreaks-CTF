@@ -1,62 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import UserBar from '../../components/UserBar/UserBar';
 import { FaInfoCircle } from 'react-icons/fa';
-import io from 'socket.io-client'; // Add this import
+import io from 'socket.io-client';
 
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [socket, setSocket] = useState(null); // Add socket state
-
-  // Initialize socket connection
-  useEffect(() => {
-    const newSocket = io('https://phreaks-ctf.onrender.com'); // Your backend URL
-    setSocket(newSocket);
-
-    return () => {
-      newSocket.disconnect(); // Clean up on unmount
-    };
-  }, []);
-
-  // Fetch notifications from API and setup socket listeners
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const res = await fetch("https://phreaks-ctf.onrender.com/api/notifications");
-        const data = await res.json();
-        
-        const receivedNotifications = Array.isArray(data) ? data : (data.notifications || []);
-        setNotifications(receivedNotifications);
-        setIsLoading(false);
-      } catch (err) {
-        setError("Failed to load notifications");
-        setIsLoading(false);
-        console.error(err);
-      }
-    };
-
-    fetchNotifications();
-
-    // Set up real-time updates with socket
-    if (socket) {
-      socket.on('new-notification', (notification) => {
-        setNotifications(prev => [notification, ...prev]);
-      });
-
-      // Error handling
-      socket.on('connect_error', (err) => {
-        console.error('Socket connection error:', err);
-      });
-    }
-
-    return () => {
-      if (socket) {
-        socket.off('new-notification');
-        socket.off('connect_error');
-      }
-    };
-  }, [socket]); // Add socket to dependency array
 
   // Format time to relative time
   const formatTime = (dateString) => {
@@ -83,6 +33,49 @@ const Notifications = () => {
     
     return "Just now";
   };
+
+  // Fetch initial notifications
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const res = await fetch("https://phreaks-ctf.onrender.com/api/notifications");
+        const data = await res.json();
+        setNotifications(Array.isArray(data) ? data : (data.notifications || []));
+        setIsLoading(false);
+      } catch (err) {
+        setError("Failed to load notifications");
+        setIsLoading(false);
+      }
+    };
+
+    fetchNotifications();
+  }, []);
+
+  // Set up Socket.io connection
+  useEffect(() => {
+    const socket = io('https://phreaks-ctf.onrender.com', {
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      transports: ['websocket'] // Force WebSocket transport
+    });
+
+    socket.on('connect', () => {
+      console.log('Socket connected');
+    });
+
+    socket.on('new-notification', (notification) => {
+      setNotifications(prev => [notification, ...prev]);
+    });
+
+    socket.on('connect_error', (err) => {
+      console.error('Socket connection error:', err);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   return (
     <div className="bg-[#121212] min-h-screen pb-1 transition-colors duration-300">
