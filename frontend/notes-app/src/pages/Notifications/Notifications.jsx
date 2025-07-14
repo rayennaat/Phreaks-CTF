@@ -106,7 +106,7 @@ useEffect(() => {
           connectionStatus === 'connected' ? 'text-green-400' : 'text-yellow-400'
         }`}>
           {connectionStatus === 'connected' 
-            ? 'Real-time updates connected' 
+            ? '' 
             : ''}
         </div>
         

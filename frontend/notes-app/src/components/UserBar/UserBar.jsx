@@ -21,28 +21,39 @@ const UserBar = () => {
   }, []);
 
   useEffect(() => {
-    // Initialize with any existing notifications
-    const checkNotifications = async () => {
+    const checkForNewNotifications = async () => {
       try {
         const res = await fetch("https://phreaks-ctf.onrender.com/api/notifications");
-        const data = await res.json();
-        if (data.length > 0) setHasNewNotifications(true);
+        const notifications = await res.json();
+        
+        if (notifications.length > 0) {
+          const latestNotificationId = notifications[0]._id || notifications[0].id;
+          const hasUnseen = latestNotificationId !== lastSeenNotification;
+          setHasNewNotifications(hasUnseen);
+        }
       } catch (err) {
         console.error("Couldn't check notifications", err);
       }
     };
-    checkNotifications();
 
-    // Set up polling fallback instead of Socket.io
-    const pollInterval = setInterval(checkNotifications, 30000); // Check every 30 seconds
+    checkForNewNotifications();
+    const interval = setInterval(checkForNewNotifications, 30000); // Check every 30 seconds
+    return () => clearInterval(interval);
+  }, [lastSeenNotification]);
 
-    return () => clearInterval(pollInterval);
-  }, []);
-
-  // Reset notification dot when visiting notifications page
   useEffect(() => {
     if (location.pathname === "/notifications") {
-      setHasNewNotifications(false);
+      // When visiting notifications page, mark all as seen
+      fetch("https://phreaks-ctf.onrender.com/api/notifications")
+        .then(res => res.json())
+        .then(notifications => {
+          if (notifications.length > 0) {
+            const latestId = notifications[0]._id || notifications[0].id;
+            localStorage.setItem("lastSeenNotification", latestId);
+            setLastSeenNotification(latestId);
+            setHasNewNotifications(false);
+          }
+        });
     }
   }, [location.pathname]);
 
@@ -75,7 +86,7 @@ const UserBar = () => {
             {hasNewNotifications && (
               <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
             )}
-          </Link> 
+          </Link>
         </div>
 
         {/* Mobile toggle button */}
