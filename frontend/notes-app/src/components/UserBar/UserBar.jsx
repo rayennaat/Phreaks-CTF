@@ -11,6 +11,10 @@ const UserBar = () => {
   const [isAdmin, setIsAdmin] = useState(localStorage.getItem("isAdmin") === "true");
   const [menuOpen, setMenuOpen] = useState(false);
   const [hasNewNotifications, setHasNewNotifications] = useState(false);
+  const [lastSeenNotification, setLastSeenNotification] = useState(() => {
+  return localStorage.getItem("lastSeenNotification") || "";
+});
+
 
   useEffect(() => {
     const checkAdminStatus = () => {
