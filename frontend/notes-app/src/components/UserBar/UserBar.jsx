@@ -20,20 +20,23 @@ const UserBar = () => {
     return () => window.removeEventListener("storage", checkAdminStatus);
   }, []);
 
-  // Socket.io connection for real-time notifications
   useEffect(() => {
-    const socket = io('https://phreaks-ctf.onrender.com', {
-      transports: ['polling'],
-      upgrade: false
-    });
-
-    socket.on('new-notification', () => {
-      setHasNewNotifications(true);
-    });
-
-    return () => {
-      socket.disconnect();
+    // Initialize with any existing notifications
+    const checkNotifications = async () => {
+      try {
+        const res = await fetch("https://phreaks-ctf.onrender.com/api/notifications");
+        const data = await res.json();
+        if (data.length > 0) setHasNewNotifications(true);
+      } catch (err) {
+        console.error("Couldn't check notifications", err);
+      }
     };
+    checkNotifications();
+
+    // Set up polling fallback instead of Socket.io
+    const pollInterval = setInterval(checkNotifications, 30000); // Check every 30 seconds
+
+    return () => clearInterval(pollInterval);
   }, []);
 
   // Reset notification dot when visiting notifications page
@@ -68,11 +71,11 @@ const UserBar = () => {
             Writeups
           </Link>
           <Link to="/notifications" className="relative">
-            <FaBell className="text-white text-lg mt-0.5 cursor-pointer hover:text-gray-300" title="Notifications"/>
+            <FaBell className="text-white text-lg mt-0.5 cursor-pointer hover:text-gray-300" />
             {hasNewNotifications && (
-              <span className="absolute bottom-0 left-0 w-2 h-2 bg-red-500 rounded-full"></span>
+              <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
             )}
-          </Link>   
+          </Link> 
         </div>
 
         {/* Mobile toggle button */}

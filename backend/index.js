@@ -1361,7 +1361,15 @@ app.get('/api/notifications', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
+// Socket.io connection handler
+io.on('connection', (socket) => {
+  console.log('New client connected');
+  socket.on('disconnect', () => {
+    console.log('Client disconnected');
+  });
+});
+
+server.listen(PORT, () => {
     console.log(`Backend running on http://localhost:${PORT}`);
 });
 
