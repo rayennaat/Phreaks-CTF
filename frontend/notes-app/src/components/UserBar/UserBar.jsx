@@ -3,12 +3,14 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaSignOutAlt, FaUser, FaBars, FaTimes } from "react-icons/fa";
 import { FaUserGroup } from "react-icons/fa6";
 import { FaTools, FaBell } from "react-icons/fa";
+import io from "socket.io-client";
 
 const UserBar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(localStorage.getItem("isAdmin") === "true");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [hasNewNotifications, setHasNewNotifications] = useState(false);
 
   useEffect(() => {
     const checkAdminStatus = () => {
@@ -17,6 +19,29 @@ const UserBar = () => {
     window.addEventListener("storage", checkAdminStatus);
     return () => window.removeEventListener("storage", checkAdminStatus);
   }, []);
+
+  // Socket.io connection for real-time notifications
+  useEffect(() => {
+    const socket = io('https://phreaks-ctf.onrender.com', {
+      transports: ['polling'],
+      upgrade: false
+    });
+
+    socket.on('new-notification', () => {
+      setHasNewNotifications(true);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  // Reset notification dot when visiting notifications page
+  useEffect(() => {
+    if (location.pathname === "/notifications") {
+      setHasNewNotifications(false);
+    }
+  }, [location.pathname]);
 
   const onLogout = () => {
     localStorage.clear();
@@ -42,8 +67,11 @@ const UserBar = () => {
           <Link to="/writeups" className={navLinkStyle("/writeups")}>
             Writeups
           </Link>
-          <Link to="/notifications" className={navLinkStyle("/notifications")}>
+          <Link to="/notifications" className="relative">
             <FaBell className="text-white text-lg mt-0.5 cursor-pointer hover:text-gray-300" title="Notifications"/>
+            {hasNewNotifications && (
+              <span className="absolute bottom-0 left-0 w-2 h-2 bg-red-500 rounded-full"></span>
+            )}
           </Link>   
         </div>
 
