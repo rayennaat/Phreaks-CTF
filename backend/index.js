@@ -1362,41 +1362,7 @@ app.get('/api/notifications', async (req, res) => {
   }
 });
 
-// Delete a single notification by ID
-app.delete("/api/notifications/:id", async (req, res) => {
-  try {
-    const notification = await Notification.findByIdAndDelete(req.params.id);
-    
-    if (!notification) {
-      return res.status(404).json({ message: "Notification not found" });
-    }
 
-    res.json({ 
-      message: "Notification deleted successfully!",
-      deletedNotification: notification
-    });
-  } catch (error) {
-    console.error("Error deleting notification:", error);
-    res.status(500).json({ message: "Failed to delete notification." });
-  }
-});
-
-// Delete all notifications
-app.delete('/api/notifications', async (req, res) => {
-  try {
-
-    const deleteResult = await Notification.deleteMany({});
-
-    res.json({
-      success: true,
-      message: `Deleted ${deleteResult.deletedCount} notifications`,
-      deletedCount: deleteResult.deletedCount
-    });
-  } catch (err) {
-    console.error('Error deleting all notifications:', err);
-    res.status(500).json({ error: 'Failed to delete notifications' });
-  }
-});
 
 // Socket.io connection handler
 io.on('connection', (socket) => {
