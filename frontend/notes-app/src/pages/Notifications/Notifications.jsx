@@ -54,52 +54,44 @@ const Notifications = () => {
   }, []);
 
   // Set up Socket.io connection with fallback
-  useEffect(() => {
-    let socket;
-    let pollInterval;
+  // Modify your Socket.io setup like this:
+useEffect(() => {
+  let socket;
+  let pollInterval;
 
-    const setupRealtime = () => {
-      // Try WebSocket first
-      socket = io('https://phreaks-ctf.onrender.com', {
-        reconnection: true,
-        reconnectionAttempts: 3,
-        reconnectionDelay: 1000,
-        transports: ['websocket', 'polling'] // Try both transports
-      });
+  const setupRealtime = () => {
+    // Configure socket with silent fallback
+    socket = io('https://phreaks-ctf.onrender.com', {
+      reconnection: false, // Disable automatic reconnection
+      autoConnect: true,
+      transports: ['websocket', 'polling'],
+      withCredentials: false,
+    });
 
-      socket.on('connect', () => {
-        setConnectionStatus('connected');
-        console.log('WebSocket connected');
-        if (pollInterval) clearInterval(pollInterval);
-      });
-
-      socket.on('new-notification', (notification) => {
-        setNotifications(prev => [notification, ...prev]);
-      });
-
-      socket.on('connect_error', (err) => {
-        console.error('WebSocket connection error:', err);
-        setConnectionStatus('disconnected');
-        
-        // Fallback to polling if WebSocket fails
-        if (!pollInterval) {
-          console.log('Falling back to polling');
-          pollInterval = setInterval(fetchNotifications, 5000);
-        }
-      });
-
-      socket.on('disconnect', () => {
-        setConnectionStatus('disconnected');
-      });
-    };
-
-    setupRealtime();
-
-    return () => {
-      if (socket) socket.disconnect();
+    socket.on('connect', () => {
+      setConnectionStatus('connected');
       if (pollInterval) clearInterval(pollInterval);
-    };
-  }, []);
+    });
+
+    socket.on('new-notification', (notification) => {
+      setNotifications(prev => [notification, ...prev]);
+    });
+
+    // Silent fallback - no error logging
+    socket.on('connect_error', () => {
+      if (!pollInterval) {
+        pollInterval = setInterval(fetchNotifications, 5000);
+      }
+    });
+  };
+
+  setupRealtime();
+
+  return () => {
+    if (socket) socket.disconnect();
+    if (pollInterval) clearInterval(pollInterval);
+  };
+}, []);
 
   return (
     <div className="bg-[#121212] min-h-screen pb-1 transition-colors duration-300">
