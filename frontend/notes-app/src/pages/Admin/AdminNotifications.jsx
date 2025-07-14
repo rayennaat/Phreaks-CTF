@@ -11,6 +11,7 @@ export default function AdminNotifications() {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false); // Add this line
 
   // Fetch notifications from API
   useEffect(() => {
@@ -68,6 +69,46 @@ export default function AdminNotifications() {
       }
     }
   };
+
+  const handleDeleteNotification = async (id) => {
+  try {
+    const response = await fetch(`https://phreaks-ctf.onrender.com/api/notifications/${id}`, {
+      method: 'DELETE'
+    });
+    
+    if (response.ok) {
+      setNotifications(notifications.filter(n => n._id !== id));
+    } else {
+      const errorData = await response.json();
+      setError(errorData.message || "Failed to delete notification");
+    }
+  } catch (err) {
+    setError("Network error - please try again");
+  }
+};
+
+const confirmDeleteAll = () => {
+  if (window.confirm("Are you sure you want to delete ALL notifications?")) {
+    deleteAllNotifications();
+  }
+};
+
+const deleteAllNotifications = async () => {
+  try {
+    const response = await fetch('https://phreaks-ctf.onrender.com/api/notifications', {
+      method: 'DELETE'
+    });
+    
+    if (response.ok) {
+      setNotifications([]);
+    } else {
+      const errorData = await response.json();
+      setError(errorData.message || "Failed to delete notifications");
+    }
+  } catch (err) {
+    setError("Network error - please try again");
+  }
+};
 
   // Format time to relative time (e.g., "2 mins ago")
   const formatTime = (dateString) => {
@@ -176,17 +217,28 @@ export default function AdminNotifications() {
         {/* Notifications Table */}
         <div className="w-full max-w-4xl mt-20 overflow-hidden rounded-lg shadow-2xl">
           <div className="flex items-center justify-between p-4 bg-gray-800">
-            <h2 className="text-xl font-semibold text-gray-300">Recent Notifications</h2>
-            <button 
-              onClick={() => setShowPostPanel(true)}
-              className="flex items-center px-4 py-2 text-sm font-medium text-white transition-colors rounded-md bg-cyan-600 hover:bg-cyan-500"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-              New Notification
-            </button>
-          </div>
+  <h2 className="text-xl font-semibold text-gray-300">Recent Notifications</h2>
+  <div className="flex gap-2">
+    <button 
+      onClick={confirmDeleteAll}
+      className="flex items-center px-4 py-2 text-sm font-medium text-white transition-colors bg-red-600 rounded-md hover:bg-red-500"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+      </svg>
+      Clear All
+    </button>
+    <button 
+      onClick={() => setShowPostPanel(true)}
+      className="flex items-center px-4 py-2 text-sm font-medium text-white transition-colors rounded-md bg-cyan-600 hover:bg-cyan-500"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+      </svg>
+      New Notification
+    </button>
+  </div>
+</div>
           
           {isLoading ? (
             <div className="w-full py-12 text-center text-gray-500">
@@ -207,21 +259,29 @@ export default function AdminNotifications() {
               </thead>
               <tbody className="divide-y divide-gray-700 bg-gray-900/50">
                 {notifications.map((notification) => (
-                  <tr 
-                    key={notification._id || notification.id} 
-                    className="transition-colors duration-200 hover:bg-gray-800/70"
-                  >
-                    <td className="px-6 py-4 text-sm text-gray-300 whitespace-nowrap">
-                      {formatTime(notification.createdAt || notification.time)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-white">{notification.title}</div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm text-gray-400">{notification.message}</div>
-                    </td>
-                  </tr>
-                ))}
+  <tr key={notification._id} className="transition-colors duration-200 hover:bg-gray-800/70 group">
+    <td className="px-6 py-4 text-sm text-gray-300 whitespace-nowrap">
+      {formatTime(notification.createdAt)}
+    </td>
+    <td className="px-6 py-4 whitespace-nowrap">
+      <div className="text-sm font-medium text-white">{notification.title}</div>
+    </td>
+    <td className="px-6 py-4">
+      <div className="flex items-center justify-between">
+        <div className="text-sm text-gray-400">{notification.message}</div>
+        <button 
+          onClick={() => handleDeleteNotification(notification._id)}
+          className="invisible p-1 text-gray-400 rounded-md group-hover:visible hover:bg-gray-700 hover:text-red-400"
+          title="Delete notification"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+        </button>
+      </div>
+    </td>
+  </tr>
+))}
               </tbody>
             </table>
           )}
@@ -232,6 +292,32 @@ export default function AdminNotifications() {
             </div>
           )}
         </div>
+
+        {showDeleteModal && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
+    <div className="p-6 bg-gray-800 rounded-lg">
+      <h3 className="mb-4 text-lg font-medium">Delete All Notifications</h3>
+      <p className="mb-6 text-gray-300">Are you sure you want to delete all notifications? This action cannot be undone.</p>
+      <div className="flex justify-end gap-3">
+        <button
+          onClick={() => setShowDeleteModal(false)}
+          className="px-4 py-2 text-sm text-white bg-gray-600 rounded-md hover:bg-gray-500"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={() => {
+            deleteAllNotifications();
+            setShowDeleteModal(false);
+          }}
+          className="px-4 py-2 text-sm text-white bg-red-600 rounded-md hover:bg-red-500"
+        >
+          Delete All
+        </button>
+      </div>
+    </div>
+  </div>
+)}
       </main>
     </div>
   );
