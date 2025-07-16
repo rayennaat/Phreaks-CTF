@@ -184,7 +184,7 @@ const TaskCard = () => {
             <h2 className="mb-4 font-mono text-2xl font-bold text-gray-300">
               {category} Challenges
             </h2>
-            <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
               {challenges.map((challenge) => {
                 const isSolved = challenge.solvedByTeams.some(team => team.team_id === teamId);
 
