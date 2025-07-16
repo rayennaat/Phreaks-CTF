@@ -225,7 +225,7 @@ const TaskCard = () => {
         className="absolute text-xl text-white top-4 right-4 hover:text-gray-300"
         onClick={handleClosePopup}
       >
-        ✖
+        
       </button>
       <Task task={selectedTask} onClose={handleClosePopup} />
     </div>
