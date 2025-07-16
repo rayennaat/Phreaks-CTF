@@ -212,25 +212,8 @@ const TaskCard = () => {
       )}
 
       {/* Task Popup - Now with proper full-screen overlay */}
-      {selectedTask && (
-  <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-70 p-4">
-    <div 
-      className="relative w-full max-w-xl p-8 mx-auto text-white bg-gray-900 rounded-lg shadow-2xl"
-      style={{
-        maxHeight: '90vh',
-        overflowY: 'auto'
-      }}
-    >
-      <button
-        className="absolute text-xl text-white top-4 right-4 hover:text-gray-300"
-        onClick={handleClosePopup}
-      >
-        
-      </button>
-      <Task task={selectedTask} onClose={handleClosePopup} />
-    </div>
-  </div>
-)}</div>
+      {selectedTask && <Task task={selectedTask} onClose={handleClosePopup} />}
+</div>
   );
 };
 
