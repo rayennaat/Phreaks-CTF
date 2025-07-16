@@ -111,7 +111,7 @@ const Task = ({ task, onClose }) => {
       onClick={handleOutsideClick}
       
     >
-      <div className="bg-slate-950 text-white p-8 rounded-lg shadow-2xl w-[550px] transform transition-transform duration-500 ease-out">
+      <div className="bg-slate-950 text-white p-8 rounded-lg shadow-2xl w-[480px] transform transition-transform duration-500 ease-out">
         <button
           className="absolute text-xl text-white top-4 right-4 hover:text-gray-300"
           onClick={onClose}
