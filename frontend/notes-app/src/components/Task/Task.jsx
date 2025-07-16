@@ -32,6 +32,8 @@ const Task = ({ task, onClose }) => {
       .catch(error => console.error("Error fetching users:", error));
   }, [task]);
 
+  if (!task) return null;
+
   const handleOutsideClick = (e) => {
     if (e.target.id === "popup-overlay") {
       onClose();
@@ -110,7 +112,7 @@ const Task = ({ task, onClose }) => {
       onClick={handleOutsideClick}
       
     >
-      <div className="bg-slate-950 text-white p-8 rounded-lg shadow-2xl w-[480px] transform transition-transform duration-500 ease-out">
+      <div className="bg-slate-950 text-white p-8 rounded-lg shadow-2xl w-[480px] transform transition-transform duration-500 ease-out border-none outline-none">
         <button
           className="absolute text-xl text-white top-4 right-4 hover:text-gray-300"
           onClick={onClose}
