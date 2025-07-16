@@ -3,6 +3,7 @@ import Blood from "../../assets/images/blood.png";
 import DOMPurify from "dompurify"; // Import DOMPurify
 
 const Task = ({ task, onClose }) => {
+  if (!task) return null;
   const [activeTab, setActiveTab] = useState("challenge");
   const [showHint, setShowHint] = useState(false);
   const [solves, setSolves] = useState([]);
@@ -30,8 +31,6 @@ const Task = ({ task, onClose }) => {
       })
       .catch(error => console.error("Error fetching users:", error));
   }, [task]);
-
-  if (!task) return null;
 
   const handleOutsideClick = (e) => {
     if (e.target.id === "popup-overlay") {
