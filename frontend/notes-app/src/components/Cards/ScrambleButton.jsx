@@ -275,7 +275,7 @@ const EncryptButton = ({ title, points, isSolved }) => {
       whileTap={{ scale: 0.975 }}
       onMouseEnter={scramble}
       onMouseLeave={stopScramble}
-      className={`group relative overflow-hidden rounded-lg border w-[300px] h-[105px] flex flex-col justify-center items-center font-mono font-medium uppercase transition-colors ${
+      className={`group relative overflow-hidden rounded-lg border w-[240px] h-[100px] flex flex-col justify-center items-center font-mono font-medium uppercase transition-colors ${
         isSolved
           ? "border-green-400 bg-green-600 text-white shadow-lg shadow-green-400/50 hover:bg-green-700 hover:shadow-green-500/50"
           : "border-neutral-600 bg-neutral-800 text-neutral-300 hover:text-indigo-300"
