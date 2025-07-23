@@ -1423,15 +1423,29 @@ app.delete('/api/notifications', async (req, res) => {
   }
 });
 
-app.post('/api/notifications/mark-seen', authenticateToken, async (req, res) => {
+// Mark specific notification as seen by user
+app.post('/api/notifications/:id/mark-seen', authenticate, async (req, res) => {
   try {
-    await Notification.updateMany(
-      {}, 
-      { $addToSet: { seenBy: req.user._id } }
+    const notification = await Notification.findByIdAndUpdate(
+      req.params.id,
+      {
+        $addToSet: {
+          seenBy: {
+            userId: req.user._id,
+            seenAt: new Date()
+          }
+        }
+      },
+      { new: true }
     );
+
+    if (!notification) {
+      return res.status(404).json({ error: 'Notification not found' });
+    }
+
     res.json({ success: true });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to mark notifications as seen' });
+    res.status(500).json({ error: 'Failed to mark notification as seen' });
   }
 });
 
