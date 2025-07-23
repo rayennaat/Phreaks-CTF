@@ -41,16 +41,6 @@ const UserBar = () => {
 
 // When clicking the bell icon
 const handleNotificationClick = () => {
-  // Mark all as seen
-  fetch("https://phreaks-ctf.onrender.com/api/notifications/mark-seen", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${localStorage.getItem("token")}`,
-      "Content-Type": "application/json"
-    }
-  });
-  
-  setHasNewNotifications(false);
   navigate("/notifications");
 };
 
