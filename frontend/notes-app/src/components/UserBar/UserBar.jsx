@@ -17,54 +17,49 @@ const UserBar = () => {
 
 
   useEffect(() => {
-    const checkAdminStatus = () => {
-      setIsAdmin(localStorage.getItem("isAdmin") === "true");
-    };
-    window.addEventListener("storage", checkAdminStatus);
-    return () => window.removeEventListener("storage", checkAdminStatus);
-  }, []);
-
-  useEffect(() => {
-    const checkForNewNotifications = async () => {
-      try {
-        const res = await fetch("https://phreaks-ctf.onrender.com/api/notifications");
-        const notifications = await res.json();
-        
-        if (notifications.length > 0) {
-          const latestNotificationId = notifications[0]._id || notifications[0].id;
-          const hasUnseen = latestNotificationId !== lastSeenNotification;
-          setHasNewNotifications(hasUnseen);
-        }
-      } catch (err) {
-        console.error("Couldn't check notifications", err);
-      }
-    };
-
-    checkForNewNotifications();
-    const interval = setInterval(checkForNewNotifications, 30000); // Check every 30 seconds
-    return () => clearInterval(interval);
-  }, [lastSeenNotification]);
-
-  useEffect(() => {
-    if (location.pathname === "/notifications") {
-      // When visiting notifications page, mark all as seen
-      fetch("https://phreaks-ctf.onrender.com/api/notifications")
-        .then(res => res.json())
-        .then(notifications => {
-          if (notifications.length > 0) {
-            const latestId = notifications[0]._id || notifications[0].id;
-            localStorage.setItem("lastSeenNotification", latestId);
-            setLastSeenNotification(latestId);
-            setHasNewNotifications(false);
-          }
-        });
+  const checkNewNotifications = async () => {
+    try {
+      const res = await fetch("https://phreaks-ctf.onrender.com/api/notifications");
+      const notifications = await res.json();
+      
+      // Check if any notification hasn't been seen by current user
+      const userId = localStorage.getItem("userId");
+      const hasUnseen = notifications.some(
+        notification => !notification.seenBy?.includes(userId)
+      );
+      
+      setHasNewNotifications(hasUnseen);
+    } catch (err) {
+      console.error("Notification check failed:", err);
     }
-  }, [location.pathname]);
-
-  const onLogout = () => {
-    localStorage.clear();
-    navigate("/login");
   };
+
+  checkNewNotifications();
+  const interval = setInterval(checkNewNotifications, 30000);
+  return () => clearInterval(interval);
+}, []);
+
+// When clicking the bell icon
+const handleNotificationClick = () => {
+  // Mark all as seen
+  fetch("https://phreaks-ctf.onrender.com/api/notifications/mark-seen", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${localStorage.getItem("token")}`,
+      "Content-Type": "application/json"
+    }
+  });
+  
+  setHasNewNotifications(false);
+  navigate("/notifications");
+};
+
+const onLogout = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("isAdmin");
+  localStorage.removeItem("userId");
+  navigate("/login");
+};
 
   const navLinkStyle = (path) =>
     `relative flex items-center text-sm text-white cursor-pointer after:content-[''] after:absolute after:left-0 after:right-0 after:mx-auto ${
@@ -85,7 +80,11 @@ const UserBar = () => {
           <Link to="/writeups" className={navLinkStyle("/writeups")}>
             Writeups
           </Link>
-          <Link to="/notifications" className="relative">
+          <Link 
+            to="/notifications" 
+            className="relative"
+            onClick={handleNotificationClick}
+          >
             <FaBell className="text-white text-lg mt-0.5 cursor-pointer hover:text-gray-300" />
             {hasNewNotifications && (
               <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>

@@ -49,7 +49,8 @@ export default function AdminNotifications() {
           },
           body: JSON.stringify({
             title: newNotification.title,
-            message: newNotification.message
+            message: newNotification.message,
+            seenBy: []
           }),
         });
         

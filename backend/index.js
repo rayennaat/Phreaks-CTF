@@ -1397,6 +1397,19 @@ app.delete('/api/notifications', async (req, res) => {
   }
 });
 
+app.post('/api/notifications/mark-seen', authenticate, async (req, res) => {
+  try {
+    await Notification.updateMany(
+      {}, 
+      { $addToSet: { seenBy: req.user._id } }
+    );
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to mark notifications as seen' });
+  }
+});
+
+
 // Socket.io connection handler
 io.on('connection', (socket) => {
   console.log('New client connected');
