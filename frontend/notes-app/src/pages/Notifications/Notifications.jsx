@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import UserBar from '../../components/UserBar/UserBar';
 import { FaInfoCircle } from 'react-icons/fa';
 import io from 'socket.io-client';
+import { useLocation } from 'react-router-dom';
 
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [connectionStatus, setConnectionStatus] = useState('connecting');
+  const location = useLocation();
 
   // Format time to relative time
   const formatTime = (dateString) => {
@@ -35,13 +37,36 @@ const Notifications = () => {
     return "Just now";
   };
 
+  // Mark notification as seen
+  const markNotificationAsSeen = async (notificationId) => {
+    try {
+      await fetch(`https://phreaks-ctf.onrender.com/api/notifications/${notificationId}/mark-seen`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
+    } catch (err) {
+      console.error('Error marking notification as seen:', err);
+    }
+  };
+
   // Fetch notifications from API
   const fetchNotifications = async () => {
     try {
       const res = await fetch("https://phreaks-ctf.onrender.com/api/notifications");
       const data = await res.json();
-      setNotifications(Array.isArray(data) ? data : (data.notifications || []));
+      const notifications = Array.isArray(data) ? data : (data.notifications || []);
+      setNotifications(notifications);
       setIsLoading(false);
+      
+      // Mark all as seen after loading
+      if (notifications.length > 0) {
+        await Promise.all(
+          notifications.map(notif => markNotificationAsSeen(notif._id))
+        );
+      }
     } catch (err) {
       setError("Failed to load notifications");
       setIsLoading(false);
@@ -53,45 +78,33 @@ const Notifications = () => {
     fetchNotifications();
   }, []);
 
-  // Set up Socket.io connection with fallback
-  // Modify your Socket.io setup like this:
-useEffect(() => {
-  let socket;
-  let pollInterval;
-
-  const setupRealtime = () => {
-    // Configure socket with silent fallback
-    socket = io('https://phreaks-ctf.onrender.com', {
-      reconnection: false, // Disable automatic reconnection
-      autoConnect: true,
-      transports: ['websocket', 'polling'],
-      withCredentials: false,
+  // Socket.io for real-time updates
+  useEffect(() => {
+    const socket = io('https://phreaks-ctf.onrender.com', {
+      reconnection: true,
+      reconnectionAttempts: 3,
+      reconnectionDelay: 1000,
+      transports: ['websocket', 'polling']
     });
 
     socket.on('connect', () => {
       setConnectionStatus('connected');
-      if (pollInterval) clearInterval(pollInterval);
     });
 
-    socket.on('new-notification', (notification) => {
-      setNotifications(prev => [notification, ...prev]);
+    socket.on('new-notification', (newNotification) => {
+      setNotifications(prev => [newNotification, ...prev]);
+      // Don't mark as seen automatically - let user view it first
     });
 
-    // Silent fallback - no error logging
-    socket.on('connect_error', () => {
-      if (!pollInterval) {
-        pollInterval = setInterval(fetchNotifications, 5000);
-      }
+    socket.on('connect_error', (err) => {
+      setConnectionStatus('disconnected');
+      console.error('Connection error:', err);
     });
-  };
 
-  setupRealtime();
-
-  return () => {
-    if (socket) socket.disconnect();
-    if (pollInterval) clearInterval(pollInterval);
-  };
-}, []);
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   return (
     <div className="bg-[#121212] min-h-screen pb-1 transition-colors duration-300">
@@ -100,17 +113,6 @@ useEffect(() => {
         <h1 className="mb-8 text-5xl font-extrabold text-center text-transparent bg-gradient-to-r from-gray-300 to-white bg-clip-text">
           Notifications
         </h1>
-        
-        {/* Connection status indicator */}
-        <div className={`text-center mb-4 text-sm ${
-          connectionStatus === 'connected' ? 'text-green-400' : 'text-yellow-400'
-        }`}>
-          {connectionStatus === 'connected' 
-            ? '' 
-            : ''}
-        </div>
-        
-        <br /><br />   
         
         {isLoading ? (
           <div className="flex justify-center">
@@ -125,8 +127,9 @@ useEffect(() => {
             {notifications.length > 0 ? (
               notifications.map((notif) => (
                 <div
-                  key={notif._id || notif.id}
+                  key={notif._id}
                   className="w-full p-4 bg-[#1e1e1e] text-white rounded-xl shadow-md border border-gray-700 hover:bg-[#2a2a2a] transition-all"
+                  onClick={() => markNotificationAsSeen(notif._id)}
                 >
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center gap-2">
@@ -134,7 +137,7 @@ useEffect(() => {
                       <h2 className="text-lg font-semibold">{notif.title}</h2>
                     </div>
                     <span className="text-sm text-gray-400">
-                      {formatTime(notif.createdAt || notif.time)}
+                      {formatTime(notif.createdAt)}
                     </span>
                   </div>
                   <p className="text-sm text-gray-300">{notif.message}</p>
