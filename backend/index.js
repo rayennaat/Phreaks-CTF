@@ -1424,7 +1424,7 @@ app.delete('/api/notifications', async (req, res) => {
 });
 
 // Mark specific notification as seen by user
-app.post('/api/notifications/:id/mark-seen', authenticate, async (req, res) => {
+app.post('/api/notifications/:id/mark-seen', authenticateToken, async (req, res) => {
   try {
     const notification = await Notification.findByIdAndUpdate(
       req.params.id,
