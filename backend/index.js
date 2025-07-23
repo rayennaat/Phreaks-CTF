@@ -1344,12 +1344,38 @@ app.get('/api/teams/:teamId/members', authenticateToken, async (req, res) => {
 
 
 app.post('/send', async (req, res) => {
-  const { title, message } = req.body;
-  const notification = new Notification({ title, message });
-  await notification.save();
+  try {
+    const { title, message } = req.body;
+    
+    // Create notification with empty seenBy array
+    const notification = new Notification({ 
+      title,
+      message,
+      seenBy: [] // Initialize as unseen by all users
+    });
+    
+    await notification.save();
 
-  io.emit('new-notification', notification); // Emit to all connected clients
-  res.json({ success: true, notification });
+    // Emit to all connected clients
+    io.emit('new-notification', {
+      ...notification.toObject(),
+      // Convert to plain object and include virtuals if needed
+    });
+
+    res.json({ 
+      success: true, 
+      notification: {
+        ...notification.toObject(),
+        // Same format as emitted data
+      }
+    });
+  } catch (err) {
+    console.error('Error creating notification:', err);
+    res.status(500).json({ 
+      success: false,
+      error: 'Failed to create notification'
+    });
+  }
 });
 
 app.get('/api/notifications', async (req, res) => {
@@ -1397,7 +1423,7 @@ app.delete('/api/notifications', async (req, res) => {
   }
 });
 
-app.post('/api/notifications/mark-seen', authenticate, async (req, res) => {
+app.post('/api/notifications/mark-seen', authenticateToken, async (req, res) => {
   try {
     await Notification.updateMany(
       {}, 
